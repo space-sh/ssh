@@ -1,0 +1,48 @@
+@clone: os
+
+_info:
+    title: Test suite for the SSH module.
+    desc: |
+        These tests uses the "testrunner" module to run the tests.
+        If the tests are run directly as-is outside a wrapper,
+        they might wreak havoc on your system.
+        TestRunner module wraps the tests properly.
+_env:
+    - CMD: ${_SPACEBIN} -m testrunner /run/ -- -- @{DIR}/test.yaml
+
+_platforms:
+    - type: docker
+      subtype: debian
+    - type: docker
+      subtype: ubuntu
+    - type: docker
+      subtype: alpine
+
+_tests:
+    -
+        -
+            @include: @{DIR}/../Spacefile.yaml|/_install
+        -
+            _env:
+                - pkg: openssh-server
+            @include: os|/install
+            _info:
+                title: Install openssh package.
+                desc:
+        -
+            _env:
+            @include: @{DIR}/../Spacefile.yaml|/configsshd
+            _info:
+                title: Configure sshd_config
+        -
+            _env:
+                - SSHKEYFILE: /tmp/keyfile
+                - CMDREDIR: "</dev/null"
+            @include: @{DIR}/../Spacefile.yaml|/keygen
+
+_clean:
+    _info:
+        title: Do nothing.
+    _env:
+        - CMDWRAP: !unset
+        - CMD: ":"

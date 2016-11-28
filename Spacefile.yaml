@@ -1,0 +1,58 @@
+---
+# spacegal/ssh
+#
+# Functionality to SSH into other machines.
+
+_dep_install:
+    _info:
+        title: Check dependencies for this module.
+    _env:
+        - CMD: SSH_DEP_INSTALL
+keygen:
+    _info:
+        title: Generate SSH key pair.
+    _env:
+        - CMD: SSH_KEYGEN -- ${SSHKEYFILE-} ${SSHPUBKEYFILE-}
+root:
+    _info:
+        title: SSH as root using password.
+    _env:
+        - CMD: SSH "${SSHFLAGS-}" "root" "$SSHHOST" "${SSHPORT-}" "" "${SSHSHELL-}" --
+    wrap:
+        _info:
+            title: Wrap other command in SSH invocation.
+        _env:
+            - SSHUSER: root
+            - CMDWRAP: SSH_WRAP
+user:
+    _info:
+        title: SSH as user with a keyfile.
+    _env:
+        - CMD: SSH "${SSHFLAGS-}" "$SSHUSER" "$SSHHOST" "${SSHPORT-}" "${SSHKEYFILE-}" "${SSHSHELL-}" --
+    wrap:
+        _info:
+            title: Wrap other command in SSH invocation.
+        _env:
+            - CMDWRAP: SSH_WRAP
+addsshkey:
+    _info:
+        title: Add a ssh pub key to a remote users authorized_keys file.
+    _env:
+        - targetuser: ${targetuser:-${SSHUSER-}}
+        - CMD: SSH_ADD_SSH_KEY ${targetuser} --
+
+resetsshkey:
+    _info:
+        title: Reset the remote users authorized_keys file to only hold one pub key.
+        desc: |
+            The pub key uploaded should be the current one being used by you.
+    _env:
+        - targetuser: ${targetuser:-${SSHUSER-}}
+        - targetuserpubkeyfile: ${targetuserpubkeyfile:-${SSHPUBKEYFILE-}}
+        - CMD: SSH_RESET_SSH_KEY -- ${targetuser} ${targetuserpubkeyfile}
+
+configsshd:
+    _info:
+        title: Make sure that SSHD is properly configured.
+    _env:
+        - CMD: SSH_SSHD_CONFIG
