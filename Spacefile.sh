@@ -21,6 +21,10 @@ clone os file
 #
 # Make sure that OpenSSH is installed.
 #
+# Returns:
+#   0: dependencies found
+#   1: failed to find dependencies
+#
 #================================
 SSH_DEP_INSTALL ()
 {
@@ -43,19 +47,19 @@ SSH_DEP_INSTALL ()
 #
 # SSH into a remote machine, possibly via a jump host.
 #
-# env:
+# Parameters:
+#   $1: flags
+#   $2: user name
+#   $3: host
+#   $4: port (optional)
+#   $5: keyfile (optional)
+#   $6: command (optional)
+#
+# Expects:
 #   SSHJUMPHOST: optional - set to use ProxyCommand to connect to the indented host.
 #   SSHJUMPPORT: optional
 #   SSHJUMPUSER: optional
 #   SSHJUMPKEYFILE: optional
-#
-# positional args:
-#   flags
-#   user
-#   host
-#   port - optional
-#   keyfile - optional
-#   command - optional
 #
 #================================
 SSH ()
@@ -134,13 +138,17 @@ bash -c \"\${_spaceinvader}\"
 # Wrapper over SSH that uses environment
 # variables instead of positional arguments.
 #
-# env:
+# Expects:
+#   SSHHOST:
 #   SSHFLAGS: optional
 #   SSHUSER: optional
-#   SSHHOST:
 #   SSHPORT: optional - defaults to 22.
-#   SSHKEYFILE: optional.
+#   SSHKEYFILE: optional
 #   SSHSHELL: optional
+#
+# Returns:
+#   0: success
+#   1: missing SSHHOST failure
 #
 #================================
 SSH_WRAP ()
@@ -170,10 +178,13 @@ SSH_WRAP ()
 #
 # Generate a SSH key pair.
 #
-# positional args:
-#   sshkeyfile: Path of the private key to create.
-#               The pub key will have the prefix ".pub".
-#   sshpubkeyfile: optional - file path where to copy the pub key to after generation.
+# Parameters:
+#   $1: Path of the private key to create. The pub key will have the prefix ".pub".
+#   $2: file path where to copy the pub key to after generation (optional).
+#
+# Returns:
+#   0: success
+#   1: failure
 #
 #================================
 SSH_KEYGEN ()
@@ -212,21 +223,21 @@ SSH_KEYGEN ()
 #
 # Setup sshfs onto a remote machine, possibly via a jump host.
 #
-# env:
+# Parameters:
+#   $1: flags
+#   $2: user
+#   $3: host
+#   $4: port
+#   $5: keyfile
+#   $6: remotepath
+#   $7: localpath
+#
+# Expects:
 #   SSHJUMPHOST: optional - set to use ProxyCommand to connect to the indented host.
 #   SSHJUMPPORT: optional
 #   SSHJUMPUSER: optional
 #   SSHJUMPKEYFILE: optional
 #   SUDO: optional - set to "sudo" to use sudo.
-#
-# positional args:
-#   flags
-#   user
-#   host
-#   port
-#   keyfile
-#   remotepath
-#   localpath
 #
 #================================
 SSH_FS ()
@@ -286,11 +297,11 @@ SSH_FS ()
 #
 # Umount a sshfs mount point.
 #
-# env:
-#   SUDO: optional - set to "sudo" to use sudo.
+# Parameters:
+#   $1: local path
 #
-# positional args:
-#   locapath
+# Expects:
+#   SUDO: set to "sudo" to use sudo (optional)
 #
 #================================
 SSH_FS_UMOUNT()
@@ -316,8 +327,12 @@ SSH_FS_UMOUNT()
 #
 # Configure the SSHD of the OS so that authorized_keys file is used.
 #
-# env:
+# Expects:
 #   $SUDO: if not run as root set SUDO=sudo
+#
+# Returns:
+#   0: success
+#   2: file does not exist
 #
 #=======================
 SSH_SSHD_CONFIG ()
@@ -347,9 +362,9 @@ SSH_SSHD_CONFIG ()
 #
 # Add a SSH public key to a users authorized_keys file.
 #
-# positional args:
-#   targetuser: The name if the existing user to add ssh key file for.
-#   sshpubkeyfile: Path to the pub key file to upload for the target user.
+# Parameters:
+#   $1: The name of the existing user to add ssh key file for
+#   $2: Path to the pub key file to upload for the target user
 #
 #===================
 SSH_ADD_SSH_KEY ()
@@ -375,9 +390,9 @@ SSH_ADD_SSH_KEY ()
 # Clear all authorized keys and re-add the current users pub key as the only one.
 # This is useful to revoke all other admins access to the machine.
 #
-# positional args:
-#   targetuser: The name if the existing user to add ssh key file for.
-#   sshpubkeyfile: Path to the pub key file to upload for the target user.
+# Parameters:
+#   $1: The name if the existing user to add ssh key file for.
+#   $2: Path to the pub key file to upload for the target user.
 #
 #=====================
 SSH_RESET_SSH_KEY ()
@@ -399,3 +414,4 @@ SSH_RESET_SSH_KEY ()
 
     FILE_PIPE_WRITE "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
 }
+

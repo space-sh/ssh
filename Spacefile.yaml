@@ -24,14 +24,21 @@ _dep_install:
         title: Check dependencies for this module.
     _env:
         - CMD: SSH_DEP_INSTALL
+
+_info:
+    title: SSH module
+    desc:|
+        Provides common admin and user ssh client operations.
+
 keygen:
     _info:
-        title: Generate SSH key pair.
+        title: Generate SSH key pair
     _env:
         - CMD: SSH_KEYGEN -- ${SSHKEYFILE-} ${SSHPUBKEYFILE-}
+
 root:
     _info:
-        title: SSH as root using password.
+        title: SSH as root using password
     _env:
         - CMD: SSH "${SSHFLAGS-}" "root" "$SSHHOST" "${SSHPORT-}" "" "${SSHSHELL-}" --
     wrap:
@@ -42,7 +49,7 @@ root:
             - CMDWRAP: SSH_WRAP
 user:
     _info:
-        title: SSH as user with a keyfile.
+        title: SSH as user with a keyfile
     _env:
         - CMD: SSH "${SSHFLAGS-}" "$SSHUSER" "$SSHHOST" "${SSHPORT-}" "${SSHKEYFILE-}" "${SSHSHELL-}" --
     wrap:
@@ -50,17 +57,21 @@ user:
             title: Wrap other command in SSH invocation.
         _env:
             - CMDWRAP: SSH_WRAP
+
 addsshkey:
     _info:
-        title: Add a ssh pub key to a remote users authorized_keys file.
+        title: Add public key
+        desc:|
+            Add a ssh public key to a remote users authorized_keys file.
     _env:
         - targetuser: ${targetuser:-${SSHUSER-}}
         - CMD: SSH_ADD_SSH_KEY ${targetuser} --
 
 resetsshkey:
     _info:
-        title: Reset the remote users authorized_keys file to only hold one pub key.
+        title: Reset ssh key
         desc: |
+            Reset the remote users authorized_keys file to only hold one pub key.
             The pub key uploaded should be the current one being used by you.
     _env:
         - targetuser: ${targetuser:-${SSHUSER-}}
@@ -69,6 +80,9 @@ resetsshkey:
 
 configsshd:
     _info:
-        title: Make sure that SSHD is properly configured.
+        title: Configure SSHD
+        desc:|
+            Make sure that SSHD is properly configured.
     _env:
         - CMD: SSH_SSHD_CONFIG
+
