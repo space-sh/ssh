@@ -1,0 +1,93 @@
+alpine_test_module:
+  image: alpine:latest
+  script:
+    - apk add --update bash curl git
+    - curl https://get.space.sh | sh
+    - mkdir ~/.ssh
+    - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+    - which bash
+    - which busybox
+    - which space
+    - bash --version
+    - space -V
+    - space -f ./test/test.yaml /_tests/ -a -a -v4
+
+arch_test_module:
+  image: finalduty/archlinux:latest
+  script:
+    - pacman -Sy --noconfirm curl git
+    - curl https://get.space.sh | sh
+    - mkdir ~/.ssh
+    - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+    - which bash
+    - which space
+    - bash --version
+    - space -V
+    - space -f ./test/test.yaml /_tests/ -a -a -v4
+
+centos_test_module:
+  image: centos:latest
+  script:
+    - yum -y update && yum -y install curl git which
+    - curl https://get.space.sh | sh
+    - mkdir ~/.ssh
+    - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+    - which bash
+    - which space
+    - bash --version
+    - space -V
+    - space -f ./test/test.yaml /_tests/ -a -a -v4
+
+debianjessie_test_module:
+  image: debian:jessie
+  script:
+    - apt-get update -qq && apt-get install -y -qq curl git
+    - curl https://get.space.sh | sh
+    - mkdir ~/.ssh
+    - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+    - which bash
+    - which space
+    - bash --version
+    - space -V
+    - space -f ./test/test.yaml /_tests/ -a -a -v4
+
+debianjessie_curl_test_module:
+  image: debian:jessie
+  script:
+    - apt-get update -qq && apt-get install -y -qq curl
+    - curl https://get.space.sh | sh
+    - mkdir ~/.ssh
+    - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+    - which bash
+    - which space
+    - bash --version
+    - space -V
+    - space -S -f ./test/test.yaml /_tests/ -a -a -v4
+
+debianjessie_wget_test_module:
+  image: debian:jessie
+  script:
+    - apt-get update -qq && apt-get install -y -qq wget
+    - mkdir space
+    - wget -qO- https://space.sh/static/download/space-0.10.0/space-0.10.0.tar.gz | tar xvfz - -C ./space && cd ./space && ./space /install/ && cd ..
+    - mkdir ~/.ssh
+    - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+    - which bash
+    - which space
+    - bash --version
+    - space -V
+    - space -S -f ./test/test.yaml /_tests/ -a -a -v4
+
+debianlatest_test_module:
+  image: debian:latest
+  script:
+    - apt-get update -qq && apt-get install -y -qq curl git
+    - curl https://get.space.sh | sh
+    - mkdir ~/.ssh
+    - printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+    - which bash
+    - which space
+    - bash --version
+    - space -V
+    - space -f ./test/test.yaml /_tests/ -a -a -v4
+
