@@ -28,11 +28,13 @@ _env:
 
 _platforms:
     - type: docker
-      subtype: debian
+      subtype: alpine:latest
     - type: docker
-      subtype: ubuntu
+      subtype: finalduty/archlinux:latest
     - type: docker
-      subtype: alpine
+      subtype: centos:latest
+    - type: docker
+      subtype: debian:latest
 
 _tests:
     -
@@ -62,3 +64,4 @@ _clean:
     _env:
         - CMDWRAP: !unset
         - CMD: ":"
+
