@@ -16,6 +16,10 @@
 
 clone os file
 
+
+# Disable warning about indirectly checking status code
+# shellcheck disable=SC2181
+
 #================================
 # SSH_DEP_INSTALL
 #
@@ -172,6 +176,10 @@ SSH_WRAP ()
     # shellcheck disable=2034
     SPACE_CMDARGS="\"${SSHFLAGS-}\" \"${SSHUSER-}\" \"${SSHHOST}\" \"${SSHPORT-}\" \"${SSHKEYFILE-}\" \"${SSHSHELL-}\" \"\${CMD}\""
 }
+
+
+# Disable warning about indirectly checking status code
+# shellcheck disable=SC2181
 
 #================================
 # SSH_KEYGEN
@@ -337,8 +345,8 @@ SSH_FS_UMOUNT()
 #=======================
 SSH_SSHD_CONFIG ()
 {
-    SPACE_CMDDEP="PRINT FILE_ROW_PERSIST"
-    SPACE_CMDENV="SUDO=\${SUDO-}"
+    SPACE_CMDDEP="PRINT FILE_ROW_PERSIST"   # shellcheck disable=SC2034
+    SPACE_CMDENV="SUDO=\${SUDO-}"           # shellcheck disable=SC2034
 
     local file="/etc/ssh/sshd_config"
     local row="AuthorizedKeysFile %h\/.ssh\/authorized_keys"
