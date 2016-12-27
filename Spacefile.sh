@@ -159,7 +159,7 @@ SSH_WRAP ()
         return 1
     fi
 
-    # We evalutate SPACE_CMDARGS inside this body because
+    # We evaluate SPACE_CMDARGS inside this body because
     # SSHSHELL must have been set first.
     # shellcheck disable=2034
     SPACE_CMDARGS="\"${SSHFLAGS-}\" \"${SSHUSER-}\" \"${SSHHOST}\" \"${SSHPORT-}\" \"${SSHKEYFILE-}\" \"${SSHSHELL-}\" \"\${CMD}\""
@@ -173,7 +173,7 @@ SSH_WRAP ()
 # positional args:
 #   sshkeyfile: Path of the private key to create.
 #               The pub key will have the prefix ".pub".
-#   sshpubkeyfile: optional - file path where to copy the pub key to efter generation.
+#   sshpubkeyfile: optional - file path where to copy the pub key to after generation.
 #
 #================================
 SSH_KEYGEN ()
