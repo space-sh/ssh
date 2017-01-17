@@ -32,7 +32,7 @@ clone os file
 #================================
 SSH_DEP_INSTALL ()
 {
-    SPACE_CMDDEP="OS_IS_INSTALLED PRINT"
+    SPACE_DEP="OS_IS_INSTALLED PRINT"
 
     PRINT "Checking for OS dependencies." "info"
 
@@ -69,8 +69,8 @@ SSH_DEP_INSTALL ()
 SSH ()
 {
     SPACE_SIGNATURE="flags user host [port keyfile shell command]"
-    SPACE_CMDDEP="PRINT"
-    SPACE_CMDENV="SSHJUMPKEYFILE=${SSHJUMPKEYFILE-} SSHJUMPUSER=${SSHJUMPUSER-} SSHJUMPHOST=${SSHJUMPHOST-}"
+    SPACE_DEP="PRINT"
+    SPACE_ENV="SSHJUMPKEYFILE=${SSHJUMPKEYFILE-} SSHJUMPUSER=${SSHJUMPUSER-} SSHJUMPHOST=${SSHJUMPHOST-}"
 
     local sshflags="${1}"
     shift
@@ -158,7 +158,7 @@ bash -c \"\${_spaceinvader}\"
 SSH_WRAP ()
 {
     # shellcheck disable=2034
-    SPACE_CMD="SSH"
+    SPACE_FN="SSH"
     # shellcheck disable=2153
 
     if [ "${_FORCE_BASH}" = "1" ] && [ "${SSHSHELL-}" = "" ]; then
@@ -171,10 +171,10 @@ SSH_WRAP ()
         return 1
     fi
 
-    # We evaluate SPACE_CMDARGS inside this body because
+    # We evaluate SPACE_ARGS inside this body because
     # SSHSHELL must have been set first.
     # shellcheck disable=2034
-    SPACE_CMDARGS="\"${SSHFLAGS-}\" \"${SSHUSER-}\" \"${SSHHOST}\" \"${SSHPORT-}\" \"${SSHKEYFILE-}\" \"${SSHSHELL-}\" \"\${CMD}\""
+    SPACE_ARGS="\"${SSHFLAGS-}\" \"${SSHUSER-}\" \"${SSHHOST}\" \"${SSHPORT-}\" \"${SSHKEYFILE-}\" \"${SSHSHELL-}\" \"\${CMD}\""
 }
 
 
@@ -198,7 +198,7 @@ SSH_WRAP ()
 SSH_KEYGEN ()
 {
     SPACE_SIGNATURE="sshkeyfile [sshpubkeyfile]"
-    SPACE_CMDDEP="PRINT FILE_MKDIRP FILE_CP"
+    SPACE_DEP="PRINT FILE_MKDIRP FILE_CP"
 
     local sshkeyfile="${1}"
     shift
@@ -251,8 +251,8 @@ SSH_KEYGEN ()
 SSH_FS ()
 {
     SPACE_SIGNATURE="flags user host port keyfile remotepath localpath"
-    SPACE_CMDDEP="PRINT FILE_MKDIRP FILE_CHOWN FILE_CHMOD"
-    SPACE_CMDENV="SUDO SSHJUMPKEYFILE=${SSHJUMPKEYFILE-} SSHJUMPUSER=${SSHJUMPUSER-} SSHJUMPHOST=${SSHJUMPHOST-}"
+    SPACE_DEP="PRINT FILE_MKDIRP FILE_CHOWN FILE_CHMOD"
+    SPACE_ENV="SUDO SSHJUMPKEYFILE=${SSHJUMPKEYFILE-} SSHJUMPUSER=${SSHJUMPUSER-} SSHJUMPHOST=${SSHJUMPHOST-}"
 
     local sshflags="${1}"
     shift
@@ -317,9 +317,9 @@ SSH_FS_UMOUNT()
     # shellcheck disable=2034
     SPACE_SIGNATURE="localpath"
     # shellcheck disable=2034
-    SPACE_CMDDEP="PRINT"
+    SPACE_DEP="PRINT"
     # shellcheck disable=2034
-    SPACE_CMDENV="SUDO"
+    SPACE_ENV="SUDO"
 
     local localpath="${1}"
     shift
@@ -345,8 +345,8 @@ SSH_FS_UMOUNT()
 #=======================
 SSH_SSHD_CONFIG ()
 {
-    SPACE_CMDDEP="PRINT FILE_ROW_PERSIST"   # shellcheck disable=SC2034
-    SPACE_CMDENV="SUDO=\${SUDO-}"           # shellcheck disable=SC2034
+    SPACE_DEP="PRINT FILE_ROW_PERSIST"   # shellcheck disable=SC2034
+    SPACE_ENV="SUDO=\${SUDO-}"           # shellcheck disable=SC2034
 
     local file="/etc/ssh/sshd_config"
     local row="AuthorizedKeysFile %h\/.ssh\/authorized_keys"
@@ -378,8 +378,8 @@ SSH_SSHD_CONFIG ()
 SSH_ADD_SSH_KEY ()
 {
     SPACE_SIGNATURE="targetuser sshpubkeyfile"
-    SPACE_CMDREDIR="<${2}"
-    SPACE_CMDDEP="FILE_PIPE_APPEND PRINT"
+    SPACE_REDIR="<${2}"
+    SPACE_DEP="FILE_PIPE_APPEND PRINT"
 
     local targetuser="${1}"
     shift
@@ -408,9 +408,9 @@ SSH_RESET_SSH_KEY ()
     # shellcheck disable=2034
     SPACE_SIGNATURE="targetuser sshpubkeyfile"
     # shellcheck disable=2034
-    SPACE_CMDREDIR="<${2}"
+    SPACE_REDIR="<${2}"
     # shellcheck disable=2034
-    SPACE_CMDDEP="FILE_PIPE_WRITE PRINT"
+    SPACE_DEP="FILE_PIPE_WRITE PRINT"
 
     local targetuser="${1}"
     shift
