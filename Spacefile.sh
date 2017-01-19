@@ -174,7 +174,7 @@ SSH_WRAP ()
     # We evaluate SPACE_ARGS inside this body because
     # SSHSHELL must have been set first.
     # shellcheck disable=2034
-    SPACE_ARGS="\"${SSHFLAGS-}\" \"${SSHUSER-}\" \"${SSHHOST}\" \"${SSHPORT-}\" \"${SSHKEYFILE-}\" \"${SSHSHELL-}\" \"\${CMD}\""
+    SPACE_ARGS="\"${SSHFLAGS-}\" \"${SSHUSER-}\" \"${SSHHOST}\" \"${SSHPORT-}\" \"${SSHKEYFILE-}\" \"${SSHSHELL-}\" \"\${RUN}\""
 }
 
 
@@ -252,7 +252,7 @@ SSH_FS ()
 {
     SPACE_SIGNATURE="flags user host port keyfile remotepath localpath"
     SPACE_DEP="PRINT FILE_MKDIRP FILE_CHOWN FILE_CHMOD"
-    SPACE_ENV="SUDO SSHJUMPKEYFILE=${SSHJUMPKEYFILE-} SSHJUMPUSER=${SSHJUMPUSER-} SSHJUMPHOST=${SSHJUMPHOST-}"
+    SPACE_ENV="SUDO=${SUDO-} SSHJUMPKEYFILE=${SSHJUMPKEYFILE-} SSHJUMPUSER=${SSHJUMPUSER-} SSHJUMPHOST=${SSHJUMPHOST-}"
 
     local sshflags="${1}"
     shift
@@ -319,7 +319,7 @@ SSH_FS_UMOUNT()
     # shellcheck disable=2034
     SPACE_DEP="PRINT"
     # shellcheck disable=2034
-    SPACE_ENV="SUDO"
+    SPACE_ENV="SUDO=${SUDO-}"
 
     local localpath="${1}"
     shift
@@ -346,7 +346,7 @@ SSH_FS_UMOUNT()
 SSH_SSHD_CONFIG ()
 {
     SPACE_DEP="PRINT FILE_ROW_PERSIST"   # shellcheck disable=SC2034
-    SPACE_ENV="SUDO=\${SUDO-}"           # shellcheck disable=SC2034
+    SPACE_ENV="SUDO=${SUDO-}"            # shellcheck disable=SC2034
 
     local file="/etc/ssh/sshd_config"
     local row="AuthorizedKeysFile %h\/.ssh\/authorized_keys"

@@ -23,7 +23,7 @@ _dep_install:
     _info:
         title: Check dependencies for this module.
     _env:
-        - CMD: SSH_DEP_INSTALL
+        - RUN: SSH_DEP_INSTALL
 
 _info:
     title: SSH module
@@ -34,29 +34,29 @@ keygen:
     _info:
         title: Generate SSH key pair
     _env:
-        - CMD: SSH_KEYGEN -- ${SSHKEYFILE-} ${SSHPUBKEYFILE-}
+        - RUN: SSH_KEYGEN -- ${SSHKEYFILE-} ${SSHPUBKEYFILE-}
 
 root:
     _info:
         title: SSH as root using password
     _env:
-        - CMD: SSH "${SSHFLAGS-}" "root" "$SSHHOST" "${SSHPORT-}" "" "${SSHSHELL-}" --
+        - RUN: SSH "${SSHFLAGS-}" "root" "$SSHHOST" "${SSHPORT-}" "" "${SSHSHELL-}" --
     wrap:
         _info:
             title: Wrap other command in SSH invocation.
         _env:
             - SSHUSER: root
-            - CMDWRAP: SSH_WRAP
+            - SPACE_WRAP: SSH_WRAP
 user:
     _info:
         title: SSH as user with a keyfile
     _env:
-        - CMD: SSH "${SSHFLAGS-}" "$SSHUSER" "$SSHHOST" "${SSHPORT-}" "${SSHKEYFILE-}" "${SSHSHELL-}" --
+        - RUN: SSH "${SSHFLAGS-}" "$SSHUSER" "$SSHHOST" "${SSHPORT-}" "${SSHKEYFILE-}" "${SSHSHELL-}" --
     wrap:
         _info:
             title: Wrap other command in SSH invocation.
         _env:
-            - CMDWRAP: SSH_WRAP
+            - SPACE_WRAP: SSH_WRAP
 
 addsshkey:
     _info:
@@ -65,7 +65,7 @@ addsshkey:
             Add a ssh public key to a remote users authorized_keys file.
     _env:
         - targetuser: ${targetuser:-${SSHUSER-}}
-        - CMD: SSH_ADD_SSH_KEY ${targetuser} --
+        - RUN: SSH_ADD_SSH_KEY ${targetuser} --
 
 resetsshkey:
     _info:
@@ -76,7 +76,7 @@ resetsshkey:
     _env:
         - targetuser: ${targetuser:-${SSHUSER-}}
         - targetuserpubkeyfile: ${targetuserpubkeyfile:-${SSHPUBKEYFILE-}}
-        - CMD: SSH_RESET_SSH_KEY -- ${targetuser} ${targetuserpubkeyfile}
+        - RUN: SSH_RESET_SSH_KEY -- ${targetuser} ${targetuserpubkeyfile}
 
 configsshd:
     _info:
@@ -84,5 +84,5 @@ configsshd:
         desc:|
             Make sure that SSHD is properly configured.
     _env:
-        - CMD: SSH_SSHD_CONFIG
+        - RUN: SSH_SSHD_CONFIG
 
