@@ -39,24 +39,24 @@ _platforms:
 _tests:
     -
         -
-            @include: @{DIR}/../Spacefile.yaml|/_dep_install
+            @include: @{DIR}/../Spacefile.yaml|/_dep_install/
         -
             _env:
                 - pkg: openssh-server
-            @include: os|/install
+            @include: os|/install/
             _info:
                 title: Install openssh package.
                 desc:
         -
             _env:
-            @include: @{DIR}/../Spacefile.yaml|/configsshd
+            @include: @{DIR}/../Spacefile.yaml|/configsshd/
             _info:
                 title: Configure sshd_config
         -
             _env:
                 - SSHKEYFILE: /tmp/keyfile
                 - SPACE_REDIR: "</dev/null"
-            @include: @{DIR}/../Spacefile.yaml|/keygen
+            @include: @{DIR}/../Spacefile.yaml|/keygen/
 
 _clean:
     _info:
