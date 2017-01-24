@@ -160,6 +160,7 @@ SSH_WRAP ()
     # shellcheck disable=2034
     SPACE_FN="SSH"
     # shellcheck disable=2153
+    SPACE_BUILDENV="SSHFLAGS=\"${SSHFLAGS-}\" SSHUSER=\"${SSHUSER-}\" SSHHOST=\"${SSHHOST-}\" SSHPORT=\"${SSHPORT-}\" SSHKEYFILE=\"${SSHKEYFILE-}\" SSHSHELL=\"${SSHSHELL-}\" _FORCE_BASH"
 
     if [ "${_FORCE_BASH}" = "1" ] && [ "${SSHSHELL-}" = "" ]; then
         SSHSHELL="bash -c"
@@ -174,7 +175,8 @@ SSH_WRAP ()
     # We evaluate SPACE_ARGS inside this body because
     # SSHSHELL must have been set first.
     # shellcheck disable=2034
-    SPACE_ARGS="\"${SSHFLAGS-}\" \"${SSHUSER-}\" \"${SSHHOST}\" \"${SSHPORT-}\" \"${SSHKEYFILE-}\" \"${SSHSHELL-}\" \"\${RUN}\""
+    local SPACE_ARGS="\"${SSHFLAGS}\" \"${SSHUSER}\" \"${SSHHOST}\" \"${SSHPORT}\" \"${SSHKEYFILE}\" \"${SSHSHELL}\" \"\${RUN}\""
+    YIELD "SPACE_ARGS"
 }
 
 
