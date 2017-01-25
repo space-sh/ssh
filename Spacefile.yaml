@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 ---
+@clone: os file
+
 # spacegal/ssh
 #
 # Functionality to SSH into other machines.
@@ -85,4 +86,4 @@ configsshd:
             Make sure that SSHD is properly configured.
     _env:
         - RUN: SSH_SSHD_CONFIG
-
+...

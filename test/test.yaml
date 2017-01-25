@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-@clone: os
+---
+@clone: os file
+@source: "@{DIR}/../Spacefile.sh"
 
 _info:
     title: Test suite for the SSH module.
@@ -64,3 +65,4 @@ _clean:
     _env:
         - SPACE_WRAP: !unset
         - RUN: ":"
+...

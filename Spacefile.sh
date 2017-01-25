@@ -14,9 +14,6 @@
 # limitations under the License.
 #
 
-clone os file
-
-
 # Disable warning about indirectly checking status code
 # shellcheck disable=SC2181
 
@@ -30,7 +27,7 @@ clone os file
 #   1: failed to find dependencies
 #
 #================================
-SSH_DEP_INSTALL ()
+SSH_DEP_INSTALL()
 {
     SPACE_DEP="OS_IS_INSTALLED PRINT"
 
@@ -66,7 +63,7 @@ SSH_DEP_INSTALL ()
 #   SSHJUMPKEYFILE: optional
 #
 #================================
-SSH ()
+SSH()
 {
     SPACE_SIGNATURE="flags user host [port keyfile shell command]"
     SPACE_DEP="PRINT"
@@ -155,7 +152,7 @@ bash -c \"\${_spaceinvader}\"
 #   1: missing SSHHOST failure
 #
 #================================
-SSH_WRAP ()
+SSH_WRAP()
 {
     # shellcheck disable=2034
     SPACE_FN="SSH"
@@ -197,7 +194,7 @@ SSH_WRAP ()
 #   1: failure
 #
 #================================
-SSH_KEYGEN ()
+SSH_KEYGEN()
 {
     SPACE_SIGNATURE="sshkeyfile [sshpubkeyfile]"
     SPACE_DEP="PRINT FILE_MKDIRP FILE_CP"
@@ -250,7 +247,7 @@ SSH_KEYGEN ()
 #   SUDO: optional - set to "sudo" to use sudo.
 #
 #================================
-SSH_FS ()
+SSH_FS()
 {
     SPACE_SIGNATURE="flags user host port keyfile remotepath localpath"
     SPACE_DEP="PRINT FILE_MKDIRP FILE_CHOWN FILE_CHMOD"
@@ -345,7 +342,7 @@ SSH_FS_UMOUNT()
 #   2: file does not exist
 #
 #=======================
-SSH_SSHD_CONFIG ()
+SSH_SSHD_CONFIG()
 {
     SPACE_DEP="PRINT FILE_ROW_PERSIST"   # shellcheck disable=SC2034
     SPACE_ENV="SUDO=${SUDO-}"            # shellcheck disable=SC2034
@@ -377,7 +374,7 @@ SSH_SSHD_CONFIG ()
 #   $2: Path to the pub key file to upload for the target user
 #
 #===================
-SSH_ADD_SSH_KEY ()
+SSH_ADD_SSH_KEY()
 {
     SPACE_SIGNATURE="targetuser sshpubkeyfile"
     SPACE_REDIR="<${2}"
@@ -405,7 +402,7 @@ SSH_ADD_SSH_KEY ()
 #   $2: Path to the pub key file to upload for the target user.
 #
 #=====================
-SSH_RESET_SSH_KEY ()
+SSH_RESET_SSH_KEY()
 {
     # shellcheck disable=2034
     SPACE_SIGNATURE="targetuser sshpubkeyfile"
@@ -424,4 +421,3 @@ SSH_RESET_SSH_KEY ()
 
     FILE_PIPE_WRITE "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
 }
-
