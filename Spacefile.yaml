@@ -39,27 +39,17 @@ keygen:
     _env:
         - RUN: SSH_KEYGEN -- ${SSHKEYFILE-} ${SSHPUBKEYFILE-}
 
-root:
+ssh:
     _info:
-        title: SSH as root using password
+        title: SSH into remote machine
     _env:
-        - RUN: SSH "${SSHFLAGS-}" "root" "$SSHHOST" "${SSHPORT-}" "" "${SSHSHELL-}" --
-    wrap:
-        _info:
-            title: Wrap other command in SSH invocation.
-        _env:
-            - SSHUSER: root
-            - SPACE_WRAP: SSH_WRAP
-user:
+        - RUN: SSH
+
+wrap:
     _info:
-        title: SSH as user with a keyfile
+        title: Wrap other command in SSH call.
     _env:
-        - RUN: SSH "${SSHFLAGS-}" "$SSHUSER" "$SSHHOST" "${SSHPORT-}" "${SSHKEYFILE-}" "${SSHSHELL-}" --
-    wrap:
-        _info:
-            title: Wrap other command in SSH invocation.
-        _env:
-            - SPACE_WRAP: SSH_WRAP
+        - SPACE_WRAP: SSH_WRAP
 
 addsshkey:
     _info:

@@ -174,6 +174,9 @@ SSH()
 # Wrapper over SSH that uses environment
 # variables instead of positional arguments.
 #
+# If connecting to multiple hosts the variables must be balanced,
+# see the SSH function for more information.
+#
 # Expects:
 #   SSHHOST:
 #   SSHUSER: optional
