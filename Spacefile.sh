@@ -191,8 +191,10 @@ SSH()
 #================================
 SSH_WRAP()
 {
+    # shellcheck disable=2034
     SPACE_FN="SSH"
     SPACE_ENV="SSHHOST SSHUSER=\"${SSHUSER-}\" SSHKEYFILE=\"${SSHKEYFILE-}\" SSHPORT=\"${SSHPORT-}\" SSHFLAGS=\"${SSHFLAGS-}\" SSHSHELL=\"${SSHSHELL-}\""
+    # shellcheck disable=2034
     SPACE_ARGS="\"\${SSHHOST}\" \"\${SSHUSER}\" \"\${SSHKEYFILE}\" \"\${SSHPORT}\" \"\${SSHFLAGS}\" \"\${SSHSHELL}\" \"\${RUN}\""
 }
 
