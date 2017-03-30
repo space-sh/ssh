@@ -30,8 +30,8 @@ _env:
 _platforms:
     - type: docker
       subtype: alpine:latest
-    - type: docker
-      subtype: finalduty/archlinux:latest
+    #- type: docker
+      #subtype: finalduty/archlinux:latest
     - type: docker
       subtype: centos:latest
     - type: docker
