@@ -18,7 +18,6 @@ _clone:
     @clone: os file string
 @include: |/_clone/
 
-# spacegal/ssh
 #
 # Functionality to SSH into other machines.
 
@@ -37,18 +36,61 @@ keygen:
     _info:
         title: Generate SSH key pair
     _env:
+        - SSHKEYFILE:
+            title: SSH keyfile target
+        - SSHPUBKEYFILE:
+            title: Optional SSH pub keyfile target
+        - SPACE_ARGS:
+            arguments:
+                -
+                    values:
+                        - sshkeyfile
+                -
+                    values:
+                        - "[sshpubkeyfile]"
+
         - RUN: SSH_KEYGEN -- ${SSHKEYFILE-} ${SSHPUBKEYFILE-}
 
 ssh:
     _info:
         title: SSH into remote machine
     _env:
+        - SPACE_ARGS:
+            arguments:
+                -
+                    desc: |
+                        A single host address,
+                        or multiple addresses
+                        space separated, last
+                        address is final destination.
+                    values:
+                        - hosts
+                -
+                    values:
+                        - users
+                -
+                    values:
+                        - keyfiles
+                -
+                    values:
+                        - ports
+                -
+                    values:
+                        - flags
+                -
+                    values:
+                        - "[shell]"
+                -
+                    values:
+                        - "[command]"
         - RUN: SSH
 
 wrap:
     _info:
         title: Wrap other command in SSH call.
     _env:
+        - SSHHOST:
+            value: ${SSHHOST-}
         - SPACE_WRAP: SSH_WRAP
 
 addsshkey:

@@ -101,6 +101,10 @@ SSH()
 
     local count=0
     STRING_ITEM_COUNT "${hosts}" "count"
+    if [ "${count}" -eq 0 ]; then
+        PRINT "Missing host(s)." "error"
+        return 1
+    fi
 
     local sshcommand=""
     local index=0
