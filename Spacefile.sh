@@ -99,6 +99,7 @@ SSH()
         is_terminal=1
     fi
 
+    local IFS="${IFS},"
     local count=0
     STRING_ITEM_COUNT "${hosts}" "count"
     if [ "${count}" -eq 0 ]; then
@@ -144,6 +145,7 @@ SSH()
         fi
         index=$((index+1))
     done
+    unset IFS
 
     if [ "${is_terminal}" = "1" ]; then
         sshcommand="ssh -t ${sshcommand}"
