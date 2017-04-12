@@ -55,6 +55,20 @@ ssh:
     _info:
         title: SSH into remote machine
     _env:
+        - SSHHOST:
+            title: One or more addresses comma separated
+        - SSHUSER:
+            title: One or more users comma separated
+        - SSHKEYFILE:
+            title: One or more keyfiles comma separated
+        - SSHPORT:
+            title: One or more ports comma separated
+        - SSHFLAGS:
+            title: One or more flags comma separated
+        - SSHSHELL:
+            title: The remote shell to invoke
+        - SSHCOMMAND:
+            title: The remote command to invoke
         - SPACE_ARGS:
             arguments:
                 -
@@ -83,7 +97,7 @@ ssh:
                 -
                     values:
                         - "[command]"
-        - RUN: SSH
+        - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
 
 wrap:
     _info:
