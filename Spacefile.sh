@@ -138,10 +138,10 @@ SSH()
         fi
 
         if [ -z "${sshcommand}" ]; then
-            sshcommand="${keyfile:+-i ${keyfile} }-p ${port} ${flags:+-${flags} }${user:+${user}@}${host}"
+            sshcommand="${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
         else
             STRING_ESCAPE "sshcommand" '"'
-            sshcommand="-o proxycommand=\"ssh -W ${host}:${port} ${sshcommand}\" ${keyfile:+-i ${keyfile} }-p ${port} ${flags:+-${flags} }${user:+${user}@}${host}"
+            sshcommand="-o proxycommand=\"ssh -W ${host}:${port} ${sshcommand}\" ${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
         fi
         index=$((index+1))
     done
