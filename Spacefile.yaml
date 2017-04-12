@@ -88,9 +88,22 @@ ssh:
 wrap:
     _info:
         title: Wrap other command in SSH call.
+        desc: |
+            You could have a list of remote hosts
+            to connect through, a.k.a. jump hosts.
     _env:
         - SSHHOST:
-            value: ${SSHHOST-}
+            title: One or more addresses comma separated
+        - SSHUSER:
+            title: One or more users comma separated
+        - SSHKEYFILE:
+            title: One or more keyfiles comma separated
+        - SSHPORT:
+            title: One or more ports comma separated
+        - SSHFLAGS:
+            title: One or more flags comma separated
+        - SSHSHELL:
+            title: The remote shell to invoke
         - SPACE_WRAP: SSH_WRAP
 
 addsshkey:
