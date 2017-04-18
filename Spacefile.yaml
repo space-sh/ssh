@@ -16,10 +16,10 @@
 ---
 _clone:
     @clone: os file string
+    @include: os|/_clone/
+    @include: file|/_clone/
+    @include: string|/_clone/
 @include: |/_clone/
-
-#
-# Functionality to SSH into other machines.
 
 _dep_install:
     _info:
@@ -29,8 +29,9 @@ _dep_install:
 
 _info:
     title: SSH module
-    desc:|
-        Provides common admin and user ssh client operations.
+    desc: |
+        Provides common user ssh client operations
+        and remote filesystem mounting using sshfs.
 
 keygen:
     _info:
@@ -39,7 +40,9 @@ keygen:
         - SSHKEYFILE:
             title: SSH keyfile target
         - SSHPUBKEYFILE:
-            title: Optional SSH pub keyfile target
+            title: Optional SSH pub keyfile copy target
+            desc: |
+                If this is set then the pub key will be copied here.
         - SPACE_ARGS:
             arguments:
                 -
@@ -47,9 +50,9 @@ keygen:
                         - sshkeyfile
                 -
                     values:
-                        - "[sshpubkeyfile]"
+                        - sshpubkeyfile:optional
 
-        - RUN: SSH_KEYGEN -- ${SSHKEYFILE-} ${SSHPUBKEYFILE-}
+        - RUN: SSH_KEYGEN -- "${SSHKEYFILE}" "${SSHPUBKEYFILE}"
 
 ssh:
     _info:
@@ -93,11 +96,125 @@ ssh:
                         - flags
                 -
                     values:
-                        - "[shell]"
+                        - shell:optional
                 -
                     values:
-                        - "[command]"
+                        - command:optional
         - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
+
+mount:
+    _info:
+        title: Mount using sshfs
+    _env:
+        - SSHREMOTEPATH:
+            title: Path on remote server to mount
+        - SSHLOCALPATH:
+            title: Local path to mount to
+        - SSHHOST:
+            title: One or more addresses comma separated
+        - SSHUSER:
+            title: One or more users comma separated
+        - SSHKEYFILE:
+            title: One or more keyfiles comma separated
+        - SSHPORT:
+            title: One or more ports comma separated
+        - SSHFLAGS:
+            title: One or more flags comma separated
+        - SSHSHELL:
+            title: The remote shell to invoke
+        - SSHCOMMAND:
+            title: The remote command to invoke
+        - SPACE_ARGS:
+            arguments:
+                -
+                    title: Remote path
+                    values:
+                        - remotepath
+                -
+                    title: Local path
+                    values:
+                        - localpath
+                -
+                    desc: |
+                        A single host address,
+                        or multiple addresses
+                        space separated, last
+                        address is final destination.
+                    values:
+                        - hosts
+                -
+                    values:
+                        - users
+                -
+                    values:
+                        - keyfiles
+                -
+                    values:
+                        - ports
+                -
+                    values:
+                        - flags
+        - RUN: SSH_FS -- "${SSHREMOTEPATH}" "${SSHLOCALPATH}" "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}"
+
+umount:
+    _info:
+        title: Unmount sshfs mountpoint
+    _env:
+        - SSHLOCALPATH:
+            title: Local path to unmount
+        - RUN: SSH_FS_UMOUNT -- "${SSHLOCALPATH}"
+
+tunnel:
+    reverse:
+        @include: |/ssh/
+        _info:
+            title: Create reverse tunnel from remote to here
+            desc: |
+                Opens SSH connection to remote server and from there
+                the SSH server will listen on a local port and all
+                clients connecting to that port will get routed back
+                here to then connect to a local port.
+        _env:
+            - SSHTUNNEL:
+                title: SSH tunnel parameters
+                desc: |
+                    The format is bindhost:bindport:localhost:localport
+                    bindhost and bindport are on the remote server,
+                    localhost and localport are on the local computer.
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS} -R${SSHTUNNEL}" "${SSHSHELL}" "${SSHCOMMAND}"
+    forward:
+        @include: |/ssh/
+        _info:
+            title: Create forward tunnel from here to remote
+            desc: |
+                Opens SSH connection to remote server and from here
+                SSH will listen to connections a a socket and forward
+                all those connections to the remote server where SSHD
+                will open a connection to the remotehost:remoteport address.
+        _env:
+            - SSHTUNNEL:
+                title: SSH tunnel parameters
+                desc: |
+                    The format is localhost:localport:remotehost:remoteport
+                    localhost and localport are on the local computer.
+                    remotehost and remoteport is the target address which will
+                    be connectd to from the remote server.
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS} -L${SSHTUNNEL}" "${SSHSHELL}" "${SSHCOMMAND}"
+    socks:
+        @include: |/ssh/
+        _info:
+            title: Create SOCKS tunnel from here to remote
+            desc: |
+                Create SOCKS tunnel to remote server.
+                Remember to configure your browser to use socks5 proxy
+                on 127.0.0.1:port.
+        _env:
+            - SSHTUNNEL:
+                title: SSH tunnel parameters
+                desc: |
+                    The format is bindhost:bindport
+                    bindhost and bindport are on the local computer.
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS} -ND${SSHTUNNEL}" "${SSHSHELL}" "${SSHCOMMAND}"
 
 wrap:
     _info:
@@ -123,11 +240,24 @@ wrap:
 addsshkey:
     _info:
         title: Add public key
-        desc:|
+        desc: |
             Add a ssh public key to a remote users authorized_keys file.
     _env:
-        - targetuser: ${targetuser:-${SSHUSER-}}
-        - RUN: SSH_ADD_SSH_KEY ${targetuser} --
+        - targetuser:
+            title: user to add pub key for
+        - sshpubkeyfile:
+            title: Public key file to add
+            completion: G
+        - SPACE_ARGS:
+            arguments:
+                -
+                    title: Target user
+                    values:
+                        - targetuser
+                -
+                    title: Public key file to add
+                    completion: G
+        - RUN: SSH_ADD_SSH_KEY -- "${targetuser}" "${sshpubkeyfile}"
 
 resetsshkey:
     _info:
@@ -136,15 +266,19 @@ resetsshkey:
             Reset the remote users authorized_keys file to only hold one pub key.
             The pub key uploaded should be the current one being used by you.
     _env:
-        - targetuser: ${targetuser:-${SSHUSER-}}
-        - targetuserpubkeyfile: ${targetuserpubkeyfile:-${SSHPUBKEYFILE-}}
-        - RUN: SSH_RESET_SSH_KEY -- ${targetuser} ${targetuserpubkeyfile}
-
-configsshd:
-    _info:
-        title: Configure SSHD
-        desc:|
-            Make sure that SSHD is properly configured.
-    _env:
-        - RUN: SSH_SSHD_CONFIG
+        - targetuser:
+            title: user to add pub key for
+        - targetuserpubkeyfile:
+            title: User to reset pub key for
+            completion: G
+        - SPACE_ARGS:
+            arguments:
+                -
+                    title: User to reset pub key for
+                    values:
+                        - targetuser
+                -
+                    title: Public key file to add
+                    completion: G
+        - RUN: SSH_RESET_SSH_KEY -- "${targetuser}" "${targetuserpubkeyfile}"
 ...

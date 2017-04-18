@@ -60,9 +60,9 @@ SSH_DEP_INSTALL()
 #       login shell. e.g. "sh" or "bash".
 #   $7: Optional command to execute on server, leave blank for interactive shell.
 #
-# The parameter lists do not have to be as big as the "hosts" list, if they
+# The parameter lists do not have to be as long as the "hosts" list, if they
 # are not then no or a default value is used.
-# To put on item in the middle of a list as empty use ''.
+# To put an item in the middle of a list as empty use ''.
 #
 # Returns:
 #   non-zero on error
@@ -70,8 +70,8 @@ SSH_DEP_INSTALL()
 #==================
 SSH()
 {
-    SPACE_SIGNATURE="host [user keyfile port flags shell command]"
-    SPACE_DEP="PRINT STRING_ESCAPE STRING_ITEM_COUNT STRING_ITEM_GET"
+    SPACE_SIGNATURE="host:1 [user keyfile port flags shell command]"
+    SPACE_DEP="PRINT STRING_ESCAPE _SSH_BUILD_COMMAND"
 
     local hosts="${1}"
     shift
@@ -99,6 +99,57 @@ SSH()
         is_terminal=1
     fi
 
+    local sshcommand=""
+    _SSH_BUILD_COMMAND
+    if [ "$?" -gt 0 ]; then
+        return 1
+    fi
+
+    if [ "${is_terminal}" = "1" ]; then
+        sshcommand="ssh -t ${sshcommand}"
+    else
+        sshcommand="ssh ${sshcommand}"
+    fi
+
+    PRINT "${sshcommand}" "debug"
+    PRINT "Connecting to: ${hosts}"
+
+    if [ -z "${shell}" ]; then
+        # No shell given, run in login shell.
+        PRINT "No shell defined, running in default login shell." "debug"
+        STRING_ESCAPE "command" '"$'
+        sh -c "${sshcommand}${command:+ -- \"${command}\"}"
+    else
+        # Run in defined shell.
+        if [ -n "${command}" ]; then
+            PRINT "Run command in defined shell: ${shell}." "debug"
+            STRING_ESCAPE "command" '"$'
+            STRING_ESCAPE "command" '"$'
+            sh -c "${sshcommand} -- ${shell} \"-c \\\"${command}\\\"\""
+        else
+            PRINT "Run defined shell: ${shell}." "debug"
+            sh -c "${sshcommand} -- ${shell}"
+        fi
+    fi
+}
+
+#================================
+# _SSH_BUILD_COMMAND
+#
+# Helper macro
+#
+# Expects:
+#   sshcommand
+#   SSH/SSH_FS variables
+#
+# Return:
+#   non-zero on error
+#
+#================================
+_SSH_BUILD_COMMAND()
+{
+    SPACE_DEP="PRINT STRING_ESCAPE STRING_ITEM_COUNT STRING_ITEM_GET"
+
     local IFS="${IFS},"
     local count=0
     STRING_ITEM_COUNT "${hosts}" "count"
@@ -107,7 +158,6 @@ SSH()
         return 1
     fi
 
-    local sshcommand=""
     local index=0
     while [ "${index}" -lt "${count}" ]; do
         local host=
@@ -145,33 +195,6 @@ SSH()
         fi
         index=$((index+1))
     done
-    unset IFS
-
-    if [ "${is_terminal}" = "1" ]; then
-        sshcommand="ssh -t ${sshcommand}"
-    else
-        sshcommand="ssh ${sshcommand}"
-    fi
-
-    PRINT "${sshcommand}" "debug"
-
-    if [ -z "${shell}" ]; then
-        # No shell given, run in login shell.
-        PRINT "No shell defined, running in default login shell." "debug"
-        STRING_ESCAPE "command" '"$'
-        sh -c "${sshcommand}${command:+ -- \"${command}\"}"
-    else
-        # Run in defined shell.
-        if [ -n "${command}" ]; then
-            PRINT "Run command in defined shell: ${shell}." "debug"
-            STRING_ESCAPE "command" '"$'
-            STRING_ESCAPE "command" '"$'
-            sh -c "${sshcommand} -- ${shell} \"-c \\\"${command}\\\"\""
-        else
-            PRINT "Run defined shell: ${shell}." "debug"
-            sh -c "${sshcommand} -- ${shell}"
-        fi
-    fi
 }
 
 #================================
@@ -223,7 +246,7 @@ SSH_WRAP()
 #================================
 SSH_KEYGEN()
 {
-    SPACE_SIGNATURE="sshkeyfile [sshpubkeyfile]"
+    SPACE_SIGNATURE="sshkeyfile:1 [sshpubkeyfile]"
     SPACE_DEP="PRINT FILE_MKDIRP FILE_CP"
 
     local sshkeyfile="${1}"
@@ -255,46 +278,38 @@ SSH_KEYGEN()
 #================================
 # SSH_FS
 #
-# Setup sshfs onto a remote machine, possibly via a jump host.
+# Setup sshfs onto a remote machine, possibly via jump host(s).
 #
 # Parameters:
-#   $1: flags
-#   $2: user
-#   $3: host
-#   $4: port
-#   $5: keyfile
-#   $6: remotepath
-#   $7: localpath
+#   $1: remotepath, path on remote server to mount
+#   $2: localpath, local path to mount to
+#   $3: host address, or many space separated addresses if using jump hosts.
+#       Last address is the final destination host.
+#   $4: Optional matching list of user names.
+#   $5: Optional matching list of key files.
+#   $6: Optional matching list of ports. e.g. "223 22 222"
+#   $7: Optional matching list of flags. e.g. "q q q"
+#   $8: Optional shell to use on remote side, leave empty for default
+#       login shell. e.g. "sh" or "bash".
+#   $9: Optional command to execute on server, leave blank for interactive shell.
+#
+# The parameter lists do not have to be as long as the "hosts" list, if they
+# are not then no or a default value is used.
+# To put an item in the middle of a list as empty use ''.
 #
 # Expects:
-#   SSHJUMPHOST: optional - set to use ProxyCommand to connect to the indented host.
-#   SSHJUMPPORT: optional
-#   SSHJUMPUSER: optional
-#   SSHJUMPKEYFILE: optional
 #   SUDO: optional - set to "sudo" to use sudo.
+#
+# Returns:
+#   non-zero on error
+#
 #
 #================================
 SSH_FS()
 {
-    # TODO this needs to be reupholstered just like SSH function.
-    SPACE_SIGNATURE="flags user host port keyfile remotepath localpath"
-    SPACE_DEP="PRINT FILE_MKDIRP FILE_CHOWN FILE_CHMOD"
-    SPACE_ENV="SUDO=${SUDO-} SSHJUMPKEYFILE=${SSHJUMPKEYFILE-} SSHJUMPUSER=${SSHJUMPUSER-} SSHJUMPHOST=${SSHJUMPHOST-}"
-
-    local sshflags="${1}"
-    shift
-
-    local sshuser="${1}"
-    shift
-
-    local sshhost="${1}"
-    shift
-
-    local sshport="${1}"
-    shift
-
-    local sshkeyfile="${1}"
-    shift
+    SPACE_SIGNATURE="remotepath:1 localpath:1 host:1 [user keyfile port flags]"
+    SPACE_DEP="PRINT FILE_MKDIRP FILE_CHOWN FILE_CHMOD _SSH_BUILD_COMMAND"
+    SPACE_ENV="SUDO=${SUDO-}"
 
     local remotepath="${1}"
     shift
@@ -302,17 +317,35 @@ SSH_FS()
     local localpath="${1}"
     shift
 
+    local hosts="${1}"
+    shift
+
+    local users="${1-}"
+    shift $(( $# > 0 ? 1 : 0 ))
+
+    local keyfiles="${1-}"
+    shift $(( $# > 0 ? 1 : 0 ))
+
+    local ports="${1-}"
+    shift $(( $# > 0 ? 1 : 0 ))
+
+    local flagses="${1-}"
+    shift $(( $# > 0 ? 1 : 0 ))
+
+    local sshcommand=""
+    _SSH_BUILD_COMMAND
+    if [ "$?" -gt 0 ]; then
+        return 1
+    fi
+
     local uid=
     uid="$(id -u)"
     local gid=
     gid="$(id -g)"
 
-    # NOTE: proxycommand untested for sshfs.
-    local sshproxycommand=""
-    if [ "${SSHJUMPHOST-}" != "" ]; then
-        # shellcheck disable=2089
-        sshproxycommand="-o ProxyCommand=\"ssh -q ${JUMPKEYFILE:+-i $JUMPKEYFILE} -W %h:%p $JUMPUSER@$JUMPHOST -p ${JUMPPORT-22}\""
-    fi
+    sshcommand="${SUDO} sshfs ${sshcommand}:${remotepath} ${localpath} -o reconnect -o gid=${gid} -o uid=${uid}"
+
+    PRINT "${sshcommand}" "debug"
 
     local SUDO="${SUDO-}"
     [ ! -d "${localpath}" ] &&
@@ -320,11 +353,11 @@ SSH_FS()
     FILE_CHOWN "${uid}:${gid}" "${localpath}" &&
     FILE_CHMOD "770" "${localpath}"
 
-    PRINT "Mounting to $localpath" "info"
+    PRINT "Connecting to: ${hosts}, mounting ${remotepath} to $localpath" "info"
 
     # shellcheck disable=2090
     # shellcheck disable=2086
-    sshfs $sshproxycommand -p $sshport ${sshkeyfile:+-o IdentityFile="${sshkeyfile}"} ${sshuser:+${sshuser}@}${sshhost}:${remotepath} "${localpath}" -o reconnect -o gid="${gid}" -o uid="${uid}"
+    sh -c "${sshcommand}"
 }
 
 #================================
@@ -335,63 +368,20 @@ SSH_FS()
 # Parameters:
 #   $1: local path
 #
-# Expects:
-#   SUDO: set to "sudo" to use sudo (optional)
-#
 #================================
 SSH_FS_UMOUNT()
 {
     # shellcheck disable=2034
-    SPACE_SIGNATURE="localpath"
+    SPACE_SIGNATURE="localpath:1"
     # shellcheck disable=2034
     SPACE_DEP="PRINT"
-    # shellcheck disable=2034
-    SPACE_ENV="SUDO=${SUDO-}"
 
     local localpath="${1}"
     shift
 
     PRINT "Unmounting $localpath" "info"
 
-    local SUDO="${SUDO-}"
-    $SUDO umount "${localpath}"
-}
-
-#=======================
-# SSH_SSHD_CONFIG
-#
-# Configure the SSHD of the OS so that authorized_keys file is used.
-#
-# Expects:
-#   $SUDO: if not run as root set SUDO=sudo
-#
-# Returns:
-#   0: success
-#   2: file does not exist
-#
-#=======================
-SSH_SSHD_CONFIG()
-{
-    SPACE_DEP="PRINT FILE_ROW_PERSIST"   # shellcheck disable=SC2034
-    SPACE_ENV="SUDO=${SUDO-}"            # shellcheck disable=SC2034
-
-    local file="/etc/ssh/sshd_config"
-    local row="AuthorizedKeysFile %h\/.ssh\/authorized_keys"
-
-    PRINT "modify ${file}." "debug"
-
-    local SUDO="${SUDO-}"
-    FILE_ROW_PERSIST "${row}" "${file}"
-    local status="$?"
-    if [ "${status}" -eq 2 ]; then
-        PRINT "File does not exist." "debug"
-        return 2
-    fi
-
-    # This is for port forwarding, which could be used with -g switch, they say.
-    # But is insecure to just allow.
-    #row="GatewayPorts yes"
-    #FILE_ROW_PERSIST "${row}" "${file}"
+    fusermount -u "${localpath}"
 }
 
 #===================
@@ -406,7 +396,7 @@ SSH_SSHD_CONFIG()
 #===================
 SSH_ADD_SSH_KEY()
 {
-    SPACE_SIGNATURE="targetuser sshpubkeyfile"
+    SPACE_SIGNATURE="targetuser:1 sshpubkeyfile:1"
     SPACE_REDIR="<${2}"
     SPACE_DEP="FILE_PIPE_APPEND PRINT"
 
@@ -435,7 +425,7 @@ SSH_ADD_SSH_KEY()
 SSH_RESET_SSH_KEY()
 {
     # shellcheck disable=2034
-    SPACE_SIGNATURE="targetuser sshpubkeyfile"
+    SPACE_SIGNATURE="targetuser:1 sshpubkeyfile:1"
     # shellcheck disable=2034
     SPACE_REDIR="<${2}"
     # shellcheck disable=2034

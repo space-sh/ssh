@@ -50,11 +50,6 @@ _tests:
                 desc:
         -
             _env:
-            @include: @{DIR}/../Spacefile.yaml|/configsshd/
-            _info:
-                title: Configure sshd_config
-        -
-            _env:
                 - SSHKEYFILE: /tmp/keyfile
                 - SPACE_REDIR: "</dev/null"
             @include: @{DIR}/../Spacefile.yaml|/keygen/
