@@ -71,7 +71,7 @@ SSH_DEP_INSTALL()
 SSH()
 {
     SPACE_SIGNATURE="host:1 [user keyfile port flags shell command]"
-    SPACE_DEP="PRINT STRING_ESCAPE _SSH_BUILD_COMMAND"
+    SPACE_DEP="PRINT _SSH_BUILD_COMMAND"
 
     local hosts="${1}"
     shift
@@ -116,19 +116,30 @@ SSH()
 
     if [ -z "${shell}" ]; then
         # No shell given, run in login shell.
-        PRINT "No shell defined, running in default login shell." "debug"
-        STRING_ESCAPE "command" '"$'
-        sh -c "${sshcommand}${command:+ -- \"${command}\"}"
-    else
-        # Run in defined shell.
         if [ -n "${command}" ]; then
-            PRINT "Run command in defined shell: ${shell}." "debug"
-            STRING_ESCAPE "command" '"$'
-            STRING_ESCAPE "command" '"$'
-            sh -c "${sshcommand} -- ${shell} \"-c \\\"${command}\\\"\""
+            PRINT "No shell defined, running in default login shell." "debug"
+            eval "${sshcommand} \"\$command\""
         else
-            PRINT "Run defined shell: ${shell}." "debug"
-            sh -c "${sshcommand} -- ${shell}"
+            PRINT "No shell defined, entering default login shell." "debug"
+            eval "${sshcommand}"
+        fi
+    else
+        # Run in specified shell.
+        if [ -n "${command}" ]; then
+            # Run command in defined shell (via login shell).
+            PRINT "Run command in defined shell: ${shell}."  "debug"
+            local command2="
+RUN=\$(cat <<\"SPACEGAL_SAYS_END_OF_FINITY_\"
+${command}
+SPACEGAL_SAYS_END_OF_FINITY_
+)
+${shell} -c \"\$RUN\"
+"
+#printf "%s\n" "$command2"
+            eval "${sshcommand} \"\$command2\""
+        else
+            PRINT "Enter defined shell: ${shell}." "debug"
+            eval "${sshcommand} -- \"\${shell}\""
         fi
     fi
 }

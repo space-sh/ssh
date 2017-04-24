@@ -214,6 +214,8 @@ tunnel:
                 desc: |
                     The format is bindhost:bindport
                     bindhost and bindport are on the local computer.
+                values:
+                    - 0.0.0.0:9333
             - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS} -ND${SSHTUNNEL}" "${SSHSHELL}" "${SSHCOMMAND}"
 
 wrap:
