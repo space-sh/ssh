@@ -33,6 +33,9 @@ _info:
         Provides common user ssh client operations
         and remote filesystem mounting using sshfs.
 
+_env:
+    - RUN_ALIAS: /ssh/
+
 keygen:
     _info:
         title: Generate SSH key pair
@@ -181,14 +184,23 @@ tunnel:
                     The format is bindhost:bindport:localhost:localport
                     bindhost and bindport are on the remote server,
                     localhost and localport are on the local computer.
-            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS} -R${SSHTUNNEL}" "${SSHSHELL}" "${SSHCOMMAND}"
+                    If bindport=0 then a random port will be chosen by
+                    sshd and outputed on clients stderr.
+                    
+                    bindhost:bindport may also be a UNIX socket on the remote
+                    server, which however requires openssl 6.7 or later on the server,
+                    and possibly also requires more from the server sshd configuration.
+                values:
+                    - bindhost:bindport:localhost:localport
+            - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-oExitOnForwardFailure=yes;-R${SSHTUNNEL}
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
     forward:
         @include: |/ssh/
         _info:
             title: Create forward tunnel from here to remote
             desc: |
                 Opens SSH connection to remote server and from here
-                SSH will listen to connections a a socket and forward
+                SSH will listen to connections on a socket and forward
                 all those connections to the remote server where SSHD
                 will open a connection to the remotehost:remoteport address.
         _env:
@@ -199,7 +211,14 @@ tunnel:
                     localhost and localport are on the local computer.
                     remotehost and remoteport is the target address which will
                     be connectd to from the remote server.
-            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS} -L${SSHTUNNEL}" "${SSHSHELL}" "${SSHCOMMAND}"
+                    
+                    localhost:localport may also be a UNIX socket on the
+                    client, which however requires openssl 6.7 or later,
+                    and possibly requires more from the server sshd configuration.
+                values:
+                    - localhost:localport:remotehost:remoteport
+            - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-L${SSHTUNNEL}
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
     socks:
         @include: |/ssh/
         _info:
@@ -215,8 +234,9 @@ tunnel:
                     The format is bindhost:bindport
                     bindhost and bindport are on the local computer.
                 values:
-                    - 0.0.0.0:9333
-            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS} -ND${SSHTUNNEL}" "${SSHSHELL}" "${SSHCOMMAND}"
+                    - 127.0.0.1:9333
+            - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-D${SSHTUNNEL}
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
 
 wrap:
     _info:
