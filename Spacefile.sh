@@ -64,6 +64,11 @@ SSH_DEP_INSTALL()
 # are not then no or a default value is used.
 # To put an item in the middle of a list as empty use ''.
 #
+# To have a space within a single value, say when using multiple flags,
+# put a semicolon ";" between flags, this semicolon will later be substituted for a space.
+# We can't put a space directly between flags for the same command since it will be split
+# and treated as flags for different commands.
+#
 # Returns:
 #   non-zero on error
 #
@@ -159,7 +164,7 @@ ${shell} -c \"\$RUN\"
 #================================
 _SSH_BUILD_COMMAND()
 {
-    SPACE_DEP="PRINT STRING_ESCAPE STRING_ITEM_COUNT STRING_ITEM_GET"
+    SPACE_DEP="PRINT STRING_ESCAPE STRING_ITEM_COUNT STRING_ITEM_GET STRING_SUBST"
 
     local IFS="${IFS},"
     local count=0
@@ -194,9 +199,12 @@ _SSH_BUILD_COMMAND()
 
         local flags=
         STRING_ITEM_GET "${flagses}" ${index} "flags"
-        if [ "${flags}" = "''" ]; then
-            flags=
-        fi
+        # '' is used as placeholder for no value, it can also
+        # be a prefix to actual flags that have been concated on,
+        # so we simply remove any leading ''.
+        flags="${flags#\'\'}"
+        # We use semicolon as a deferred space, since a space would separate the flags.
+        STRING_SUBST "flags" ';' ' ' 1
 
         if [ -z "${sshcommand}" ]; then
             sshcommand="${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
