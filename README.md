@@ -1,6 +1,7 @@
 # SSH module | [![build status](https://gitlab.com/space-sh/ssh/badges/master/build.svg)](https://gitlab.com/space-sh/ssh/commits/master)
 
-Provides common admin and user ssh client operations.
+Provides common user ssh client operations
+and remote filesystem mounting using sshfs.
 
 
 
@@ -11,15 +12,12 @@ Provides common admin and user ssh client operations.
 	
 
 
-## /configsshd/
-	Configure SSHD
-
-	Make sure that SSHD is properly configured.
-	
-
-
 ## /keygen/
 	Generate SSH key pair
+
+
+## /mount/
+	Mount using sshfs
 
 
 ## /resetsshkey/
@@ -34,8 +32,23 @@ Provides common admin and user ssh client operations.
 	SSH into remote machine
 
 
+## /tunnel/
+	
+
++ forward
++ reverse
++ socks
+
+## /umount/
+	Unmount sshfs mountpoint
+
+
 ## /wrap/
 	Wrap other command in SSH call.
+
+	You could have a list of remote hosts
+	to connect through, a.k.a. jump hosts.
+	
 
 
 # Functions 
@@ -70,11 +83,31 @@ Optionally use one or more "jump servers"
 - login shell. e.g. "sh" or "bash".  
 - $7: Optional command to execute on server, leave blank for interactive shell.  
   
-- The parameter lists do not have to be as big as the "hosts" list, if they  
+- The parameter lists do not have to be as long as the "hosts" list, if they  
 - are not then no or a default value is used.  
-- To put on item in the middle of a list as empty use ''.  
+- To put an item in the middle of a list as empty use ''.  
+  
+- To have a space within a single value, say when using multiple flags,  
+- put a semicolon ";" between flags, this semicolon will later be substituted for a space.  
+- We can't put a space directly between flags for the same command since it will be split  
+- and treated as flags for different commands.  
   
 ### Returns:  
+- non-zero on error  
+  
+  
+  
+## \_SSH\_BUILD\_COMMAND()  
+  
+  
+  
+Helper macro  
+  
+### Expects:  
+- sshcommand  
+- SSH/SSH\_FS variables  
+  
+- Return:  
 - non-zero on error  
   
   
@@ -122,23 +155,31 @@ Generate a SSH key pair.
   
   
   
-Setup sshfs onto a remote machine, possibly via a jump host.  
+Setup sshfs onto a remote machine, possibly via jump host(s).  
   
 ### Parameters:  
-- $1: flags  
-- $2: user  
-- $3: host  
-- $4: port  
-- $5: keyfile  
-- $6: remotepath  
-- $7: localpath  
+- $1: remotepath, path on remote server to mount  
+- $2: localpath, local path to mount to  
+- $3: host address, or many space separated addresses if using jump hosts.  
+- Last address is the final destination host.  
+- $4: Optional matching list of user names.  
+- $5: Optional matching list of key files.  
+- $6: Optional matching list of ports. e.g. "223 22 222"  
+- $7: Optional matching list of flags. e.g. "q q q"  
+- $8: Optional shell to use on remote side, leave empty for default  
+- login shell. e.g. "sh" or "bash".  
+- $9: Optional command to execute on server, leave blank for interactive shell.  
+  
+- The parameter lists do not have to be as long as the "hosts" list, if they  
+- are not then no or a default value is used.  
+- To put an item in the middle of a list as empty use ''.  
   
 ### Expects:  
-- SSHJUMPHOST: optional - set to use ProxyCommand to connect to the indented host.  
-- SSHJUMPPORT: optional  
-- SSHJUMPUSER: optional  
-- SSHJUMPKEYFILE: optional  
 - SUDO: optional - set to "sudo" to use sudo.  
+  
+### Returns:  
+- non-zero on error  
+  
   
   
   
@@ -150,24 +191,6 @@ Umount a sshfs mount point.
   
 ### Parameters:  
 - $1: local path  
-  
-### Expects:  
-- SUDO: set to "sudo" to use sudo (optional)  
-  
-  
-  
-## SSH\_SSHD\_CONFIG()  
-  
-  
-  
-Configure the SSHD of the OS so that authorized\_keys file is used.  
-  
-### Expects:  
-- $SUDO: if not run as root set SUDOsudo  
-  
-### Returns:  
-- 0: success  
-- 2: file does not exist  
   
   
   
