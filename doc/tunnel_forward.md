@@ -14,7 +14,7 @@ of the internet, then we can leverage a third party server to make that connecti
 A forward tunnel will have SSH open a listening socket locally on the
 client computer. On accepting new connection the SSH client will ask
 the SSH daemon on the remote server to open a client connection to
-remotehost:remoteport, and all data will be tunneled between the end points.
+remotehost:remoteport, and all data will be tunnelled between the end points.
 
 Set `-e SSHTUNNEL=localhost:localport:remotehost:remoteport`  
 

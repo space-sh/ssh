@@ -10,8 +10,8 @@ To surf through a VPN tunnel we can use the SSH socks functionality.
 
 The SSH client will open a secure connection to a remote server, your browser
 must be setup to use the local address as a socks5 proxy, then all requests
-within the browser will be tunneled through the secure connection and all
-outbound connections to the intrnet will look like the originated from the
+within the browser will be tunnelled through the secure connection and all
+outbound connections to the internet will look like the originated from the
 remote server.
 
 bindhost:bindport are relative to the local machine.

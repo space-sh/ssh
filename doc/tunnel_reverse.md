@@ -8,16 +8,16 @@ weight: 200
 
 We can open a reverse tunnel from a remote server back to the local computer.
 
-A reverse tunnel could be useful when we are behing a strict firewall and cannot
+A reverse tunnel could be useful when we are behind a strict firewall and cannot
 listen for incoming connections directly because the firewall will not let them through.
 So we leverage a third party server to tunnel such a connection back to us over the secure
 SSH connection.
 
 A reverse tunnel makes the SSH daemon on the remote server
 open a listening socket on the provided bindaddress:bindport,
-and each accepted connection will be tunneled back to the local
+and each accepted connection will be tunnelled back to the local
 computer by SSH opening a client socket to localhost:localport
-so that data can be tunneled bwtween those end points.
+so that data can be tunnelled between those end points.
 
 Set `-e SSHTUNNEL=bindaddress:bindport:localhost:localport`  
 
