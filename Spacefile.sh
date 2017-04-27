@@ -43,6 +43,12 @@ SSH_DEP_INSTALL()
     fi
 }
 
+
+# Disable warning about local keyword
+# shellcheck disable=SC2039
+# Disable warning about indirectly checking status code
+# shellcheck disable=SC2181
+
 #==================
 # SSH
 #
@@ -149,6 +155,10 @@ ${shell} -c \"\$RUN\"
     fi
 }
 
+
+# Disable warning about local keyword
+# shellcheck disable=SC2039
+
 #================================
 # _SSH_BUILD_COMMAND
 #
@@ -246,6 +256,9 @@ SSH_WRAP()
     SPACE_ARGS="\"\${SSHHOST}\" \"\${SSHUSER}\" \"\${SSHKEYFILE}\" \"\${SSHPORT}\" \"\${SSHFLAGS}\" \"\${SSHSHELL}\" \"\${RUN}\""
 }
 
+
+# Disable warning about local keyword
+# shellcheck disable=SC2039
 # Disable warning about indirectly checking status code
 # shellcheck disable=SC2181
 
@@ -293,6 +306,12 @@ SSH_KEYGEN()
         FILE_MKDIRP "$(dirname ${sshpubkeyfile})" && FILE_CP "${sshkeyfile}.pub" "${sshpubkeyfile}"
     fi
 }
+
+
+# Disable warning about local keyword
+# shellcheck disable=SC2039
+# Disable warning about indirectly checking status code
+# shellcheck disable=SC2181
 
 #================================
 # SSH_FS
@@ -379,6 +398,10 @@ SSH_FS()
     sh -c "${sshcommand}"
 }
 
+
+# Disable warning about local keyword
+# shellcheck disable=SC2039
+
 #================================
 # SSH_FS_UMOUNT
 #
@@ -402,6 +425,10 @@ SSH_FS_UMOUNT()
 
     fusermount -u "${localpath}"
 }
+
+
+# Disable warning about local keyword
+# shellcheck disable=SC2039
 
 #===================
 # SSH_ADD_SSH_KEY
@@ -429,6 +456,10 @@ SSH_ADD_SSH_KEY()
 
     FILE_PIPE_APPEND "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
 }
+
+
+# Disable warning about local keyword
+# shellcheck disable=SC2039
 
 #=====================
 # SSH_RESET_SSH_KEY
