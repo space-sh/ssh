@@ -200,7 +200,7 @@ _SSH_BUILD_COMMAND()
         local flags=
         STRING_ITEM_GET "${flagses}" ${index} "flags"
         # '' is used as placeholder for no value, it can also
-        # be a prefix to actual flags that have been concated on,
+        # be a prefix to actual flags that have been concatenated on,
         # so we simply remove any leading ''.
         flags="${flags#\'\'}"
         # We use semicolon as a deferred space, since a space would separate the flags.

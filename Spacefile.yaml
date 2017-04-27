@@ -210,7 +210,7 @@ tunnel:
                     The format is localhost:localport:remotehost:remoteport
                     localhost and localport are on the local computer.
                     remotehost and remoteport is the target address which will
-                    be connectd to from the remote server.
+                    be connected to from the remote server.
                     
                     localhost:localport may also be a UNIX socket on the
                     client, which however requires openssl 6.7 or later,
