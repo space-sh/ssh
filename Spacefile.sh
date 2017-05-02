@@ -146,7 +146,6 @@ SPACEGAL_SAYS_END_OF_FINITY_
 )
 ${shell} -c \"\$RUN\"
 "
-#printf "%s\n" "$command2"
             eval "${sshcommand} \"\$command2\""
         else
             PRINT "Enter defined shell: ${shell}." "debug"
@@ -444,7 +443,8 @@ SSH_ADD_SSH_KEY()
 {
     SPACE_SIGNATURE="targetuser:1 sshpubkeyfile:1"
     SPACE_REDIR="<${2}"
-    SPACE_DEP="FILE_PIPE_APPEND PRINT"
+    SPACE_DEP="FILE_PIPE_APPEND PRINT OS_ID"
+    SPACE_ENV="SUDO=${SUDO-}"
 
     local targetuser="${1}"
     shift
@@ -454,7 +454,24 @@ SSH_ADD_SSH_KEY()
 
     PRINT "Add SSH pub key ${sshpubkeyfile} for user ${targetuser}." "debug"
 
-    FILE_PIPE_APPEND "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
+    local _OSTYPE=''
+    local _OSPKGMGR=''
+    local _OSHOME=''
+    local _OSCWD=''
+    local _OSINIT=''
+    OS_ID
+
+    local SUDO="${SUDO-}"
+    if [ ! -d "${_OSHOME}/${targetuser}/.ssh/" ]; then
+        ${SUDO} mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
+        ${SUDO} chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
+        ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
+        PRINT "Could not create .ssh directory for user ${targetuser}." "error"
+        return 1
+    fi
+    FILE_PIPE_APPEND "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
+    ${SUDO} chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
+    ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
 }
 
 
@@ -479,7 +496,8 @@ SSH_RESET_SSH_KEY()
     # shellcheck disable=2034
     SPACE_REDIR="<${2}"
     # shellcheck disable=2034
-    SPACE_DEP="FILE_PIPE_WRITE PRINT"
+    SPACE_DEP="FILE_PIPE_WRITE PRINT OS_ID"
+    SPACE_ENV="SUDO=${SUDO-}"
 
     local targetuser="${1}"
     shift
@@ -489,5 +507,22 @@ SSH_RESET_SSH_KEY()
 
     PRINT "Reset SSH pub key ${sshpubkeyfile} for user ${targetuser}." "debug"
 
-    FILE_PIPE_WRITE "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
+    local _OSTYPE=''
+    local _OSPKGMGR=''
+    local _OSHOME=''
+    local _OSCWD=''
+    local _OSINIT=''
+    OS_ID
+
+    local SUDO="${SUDO-}"
+    if [ ! -d "${_OSHOME}/${targetuser}/.ssh/" ]; then
+        ${SUDO} mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
+        ${SUDO} chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
+        ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
+        PRINT "Could not create .ssh directory for user ${targetuser}." "error"
+        return 1
+    fi
+    FILE_PIPE_WRITE "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
+    ${SUDO} chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
+    ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
 }
