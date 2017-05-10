@@ -334,9 +334,6 @@ SSH_KEYGEN()
 # are not then no or a default value is used.
 # To put an item in the middle of a list as empty use ''.
 #
-# Expects:
-#   SUDO: optional - set to "sudo" to use sudo.
-#
 # Returns:
 #   non-zero on error
 #
@@ -346,7 +343,6 @@ SSH_FS()
 {
     SPACE_SIGNATURE="remotepath:1 localpath:1 host:1 [user keyfile port flags]"
     SPACE_DEP="PRINT FILE_MKDIRP FILE_CHOWN FILE_CHMOD _SSH_BUILD_COMMAND"
-    SPACE_ENV="SUDO=${SUDO-}"
 
     local remotepath="${1}"
     shift
@@ -380,11 +376,10 @@ SSH_FS()
     local gid=
     gid="$(id -g)"
 
-    sshcommand="${SUDO} sshfs ${sshcommand}:${remotepath} ${localpath} -o reconnect -o gid=${gid} -o uid=${uid}"
+    sshcommand="sshfs ${sshcommand}:${remotepath} ${localpath} -o reconnect -o gid=${gid} -o uid=${uid}"
 
     PRINT "${sshcommand}" "debug"
 
-    local SUDO="${SUDO-}"
     [ ! -d "${localpath}" ] &&
     FILE_MKDIRP "${localpath}" &&
     FILE_CHOWN "${uid}:${gid}" "${localpath}" &&
@@ -392,9 +387,7 @@ SSH_FS()
 
     PRINT "Connecting to: ${hosts}, mounting ${remotepath} to $localpath" "info"
 
-    # shellcheck disable=2090
-    # shellcheck disable=2086
-    sh -c "${sshcommand}"
+    eval "${sshcommand}"
 }
 
 
@@ -444,7 +437,6 @@ SSH_ADD_SSH_KEY()
     SPACE_SIGNATURE="targetuser:1 sshpubkeyfile:1"
     SPACE_REDIR="<${2}"
     SPACE_DEP="FILE_PIPE_APPEND PRINT OS_ID"
-    SPACE_ENV="SUDO=${SUDO-}"
 
     local targetuser="${1}"
     shift
@@ -461,17 +453,16 @@ SSH_ADD_SSH_KEY()
     local _OSINIT=''
     OS_ID
 
-    local SUDO="${SUDO-}"
     if [ ! -d "${_OSHOME}/${targetuser}/.ssh/" ]; then
-        ${SUDO} mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
-        ${SUDO} chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
-        ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
+        mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
+        chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
+        chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
         PRINT "Could not create .ssh directory for user ${targetuser}." "error"
         return 1
     fi
     FILE_PIPE_APPEND "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    ${SUDO} chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
+    chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
+    chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
 }
 
 
@@ -497,7 +488,6 @@ SSH_RESET_SSH_KEY()
     SPACE_REDIR="<${2}"
     # shellcheck disable=2034
     SPACE_DEP="FILE_PIPE_WRITE PRINT OS_ID"
-    SPACE_ENV="SUDO=${SUDO-}"
 
     local targetuser="${1}"
     shift
@@ -514,15 +504,14 @@ SSH_RESET_SSH_KEY()
     local _OSINIT=''
     OS_ID
 
-    local SUDO="${SUDO-}"
     if [ ! -d "${_OSHOME}/${targetuser}/.ssh/" ]; then
-        ${SUDO} mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
-        ${SUDO} chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
-        ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
+        mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
+        chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
+        chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
         PRINT "Could not create .ssh directory for user ${targetuser}." "error"
         return 1
     fi
     FILE_PIPE_WRITE "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    ${SUDO} chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    ${SUDO} chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
+    chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
+    chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
 }
