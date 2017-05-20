@@ -1,5 +1,12 @@
 # Space Module change log - ssh
 
+## [1.1.2 - 2017-05-20]
+
+* Rename expected local OUT variables
+
+- Remove old `SUDO` behavior
+
+
 ## [1.1.1 - 2017-05-09]
 
 * Update authorized key operations to create .ssh dir when adding and resetting
