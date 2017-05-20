@@ -104,7 +104,7 @@ Optionally use one or more "jump servers"
 Helper macro  
   
 ### Expects:  
-- sshcommand  
+- out\_sshcommand  
 - SSH/SSH\_FS variables  
   
 - Return:  
@@ -173,9 +173,6 @@ Setup sshfs onto a remote machine, possibly via jump host(s).
 - The parameter lists do not have to be as long as the "hosts" list, if they  
 - are not then no or a default value is used.  
 - To put an item in the middle of a list as empty use ''.  
-  
-### Expects:  
-- SUDO: optional - set to "sudo" to use sudo.  
   
 ### Returns:  
 - non-zero on error  
