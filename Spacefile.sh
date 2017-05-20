@@ -139,6 +139,7 @@ SSH()
         if [ -n "${command}" ]; then
             # Run command in defined shell (via login shell).
             PRINT "Run command in defined shell: ${shell}."  "debug"
+            # shellcheck disable=SC2034
             local command2="
 RUN=\$(cat <<\"SPACEGAL_SAYS_END_OF_FINITY_\"
 ${command}
@@ -250,6 +251,7 @@ SSH_WRAP()
 {
     # shellcheck disable=2034
     SPACE_FN="SSH"
+    # shellcheck disable=2034
     SPACE_ENV="SSHHOST SSHUSER=\"${SSHUSER-}\" SSHKEYFILE=\"${SSHKEYFILE-}\" SSHPORT=\"${SSHPORT-}\" SSHFLAGS=\"${SSHFLAGS-}\" SSHSHELL=\"${SSHSHELL-}\""
     # shellcheck disable=2034
     SPACE_ARGS="\"\${SSHHOST}\" \"\${SSHUSER}\" \"\${SSHKEYFILE}\" \"\${SSHPORT}\" \"\${SSHFLAGS}\" \"\${SSHSHELL}\" \"\${RUN}\""
@@ -466,6 +468,8 @@ SSH_ADD_SSH_KEY()
 }
 
 
+# Disable warning about unused OS_ID out parameters
+# shellcheck disable=2034
 # Disable warning about local keyword
 # shellcheck disable=SC2039
 
