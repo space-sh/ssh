@@ -446,23 +446,23 @@ SSH_ADD_SSH_KEY()
 
     PRINT "Add SSH pub key ${sshpubkeyfile} for user ${targetuser}." "debug"
 
-    local _OSTYPE=''
-    local _OSPKGMGR=''
-    local _OSHOME=''
-    local _OSCWD=''
-    local _OSINIT=''
+    local out_ostype=''
+    local out_ospkgmgr=''
+    local out_oshome=''
+    local out_oscwd=''
+    local out_osinit=''
     OS_ID
 
-    if [ ! -d "${_OSHOME}/${targetuser}/.ssh/" ]; then
-        mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
-        chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
-        chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
+    if [ ! -d "${out_oshome}/${targetuser}/.ssh/" ]; then
+        mkdir "${out_oshome}/${targetuser}/.ssh/" &&
+        chmod 700 "${out_oshome}/${targetuser}/.ssh/" &&
+        chown "${targetuser}:${targetuser}" "${out_oshome}/${targetuser}/.ssh/" ||
         PRINT "Could not create .ssh directory for user ${targetuser}." "error"
         return 1
     fi
-    FILE_PIPE_APPEND "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
+    FILE_PIPE_APPEND "${out_oshome}/${targetuser}/.ssh/authorized_keys" &&
+    chmod 600 "${out_oshome}/${targetuser}/.ssh/authorized_keys" &&
+    chown "${targetuser}:${targetuser}" "${out_oshome}/${targetuser}/.ssh/authorized_keys"
 }
 
 
@@ -497,21 +497,21 @@ SSH_RESET_SSH_KEY()
 
     PRINT "Reset SSH pub key ${sshpubkeyfile} for user ${targetuser}." "debug"
 
-    local _OSTYPE=''
-    local _OSPKGMGR=''
-    local _OSHOME=''
-    local _OSCWD=''
-    local _OSINIT=''
+    local out_ostype=''
+    local out_ospkgmgr=''
+    local out_oshome=''
+    local out_oscwd=''
+    local out_osinit=''
     OS_ID
 
-    if [ ! -d "${_OSHOME}/${targetuser}/.ssh/" ]; then
-        mkdir "${_OSHOME}/${targetuser}/.ssh/" &&
-        chmod 700 "${_OSHOME}/${targetuser}/.ssh/" &&
-        chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/" ||
+    if [ ! -d "${out_oshome}/${targetuser}/.ssh/" ]; then
+        mkdir "${out_oshome}/${targetuser}/.ssh/" &&
+        chmod 700 "${out_oshome}/${targetuser}/.ssh/" &&
+        chown "${targetuser}:${targetuser}" "${out_oshome}/${targetuser}/.ssh/" ||
         PRINT "Could not create .ssh directory for user ${targetuser}." "error"
         return 1
     fi
-    FILE_PIPE_WRITE "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    chmod 600 "${_OSHOME}/${targetuser}/.ssh/authorized_keys" &&
-    chown "${targetuser}:${targetuser}" "${_OSHOME}/${targetuser}/.ssh/authorized_keys"
+    FILE_PIPE_WRITE "${out_oshome}/${targetuser}/.ssh/authorized_keys" &&
+    chmod 600 "${out_oshome}/${targetuser}/.ssh/authorized_keys" &&
+    chown "${targetuser}:${targetuser}" "${out_oshome}/${targetuser}/.ssh/authorized_keys"
 }
