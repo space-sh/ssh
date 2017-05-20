@@ -110,29 +110,29 @@ SSH()
         is_terminal=1
     fi
 
-    local sshcommand=""
+    local out_sshcommand=""
     _SSH_BUILD_COMMAND
     if [ "$?" -gt 0 ]; then
         return 1
     fi
 
     if [ "${is_terminal}" = "1" ]; then
-        sshcommand="ssh -t ${sshcommand}"
+        out_sshcommand="ssh -t ${out_sshcommand}"
     else
-        sshcommand="ssh ${sshcommand}"
+        out_sshcommand="ssh ${out_sshcommand}"
     fi
 
-    PRINT "${sshcommand}" "debug"
+    PRINT "${out_sshcommand}" "debug"
     PRINT "Connecting to: ${hosts}"
 
     if [ -z "${shell}" ]; then
         # No shell given, run in login shell.
         if [ -n "${command}" ]; then
             PRINT "No shell defined, running in default login shell." "debug"
-            eval "${sshcommand} \"\$command\""
+            eval "${out_sshcommand} \"\$command\""
         else
             PRINT "No shell defined, entering default login shell." "debug"
-            eval "${sshcommand}"
+            eval "${out_sshcommand}"
         fi
     else
         # Run in specified shell.
@@ -146,10 +146,10 @@ SPACEGAL_SAYS_END_OF_FINITY_
 )
 ${shell} -c \"\$RUN\"
 "
-            eval "${sshcommand} \"\$command2\""
+            eval "${out_sshcommand} \"\$command2\""
         else
             PRINT "Enter defined shell: ${shell}." "debug"
-            eval "${sshcommand} -- \"\${shell}\""
+            eval "${out_sshcommand} -- \"\${shell}\""
         fi
     fi
 }
@@ -164,7 +164,7 @@ ${shell} -c \"\$RUN\"
 # Helper macro
 #
 # Expects:
-#   sshcommand
+#   out_sshcommand
 #   SSH/SSH_FS variables
 #
 # Return:
@@ -215,11 +215,11 @@ _SSH_BUILD_COMMAND()
         # We use semicolon as a deferred space, since a space would separate the flags.
         STRING_SUBST "flags" ';' ' ' 1
 
-        if [ -z "${sshcommand}" ]; then
-            sshcommand="${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
+        if [ -z "${out_sshcommand}" ]; then
+            out_sshcommand="${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
         else
-            STRING_ESCAPE "sshcommand" '"'
-            sshcommand="-o proxycommand=\"ssh -W ${host}:${port} ${sshcommand}\" ${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
+            STRING_ESCAPE "out_sshcommand" '"'
+            out_sshcommand="-o proxycommand=\"ssh -W ${host}:${port} ${out_sshcommand}\" ${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
         fi
         index=$((index+1))
     done
@@ -365,7 +365,7 @@ SSH_FS()
     local flagses="${1-}"
     shift $(( $# > 0 ? 1 : 0 ))
 
-    local sshcommand=""
+    local out_sshcommand=""
     _SSH_BUILD_COMMAND
     if [ "$?" -gt 0 ]; then
         return 1
@@ -376,9 +376,9 @@ SSH_FS()
     local gid=
     gid="$(id -g)"
 
-    sshcommand="sshfs ${sshcommand}:${remotepath} ${localpath} -o reconnect -o gid=${gid} -o uid=${uid}"
+    out_sshcommand="sshfs ${out_sshcommand}:${remotepath} ${localpath} -o reconnect -o gid=${gid} -o uid=${uid}"
 
-    PRINT "${sshcommand}" "debug"
+    PRINT "${out_sshcommand}" "debug"
 
     [ ! -d "${localpath}" ] &&
     FILE_MKDIRP "${localpath}" &&
@@ -387,7 +387,7 @@ SSH_FS()
 
     PRINT "Connecting to: ${hosts}, mounting ${remotepath} to $localpath" "info"
 
-    eval "${sshcommand}"
+    eval "${out_sshcommand}"
 }
 
 
