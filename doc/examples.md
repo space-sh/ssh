@@ -12,7 +12,7 @@ weight: 200
 Using positional arguments:  
 
 ```sh
-$ space -m ssh /ssh/ -- address
+space -m ssh /ssh/ -- address
 
 ```
 
@@ -21,7 +21,7 @@ because then you do not have to consider what position an argument
 must come in:  
 
 ```sh
-$ space -m ssh /ssh/ -e SSHHOST=address
+space -m ssh /ssh/ -e SSHHOST=address
 
 ```
 
@@ -30,7 +30,7 @@ The above will issue a login shell onto the remote host.
 ### Run command remotely
 
 ```sh
-$ space -m ssh /ssh/ -e SSHHOST=address -e SSHCOMMAND="ls -l"
+space -m ssh /ssh/ -e SSHHOST=address -e SSHCOMMAND="ls -l"
 
 ```
 
@@ -46,14 +46,14 @@ Usually keys are used as login credentials and all keys are to exist on the clie
 To use jump hosts, simply add all hosts from left to right, comma separated. The last host is the destination host:  
 
 ```sh
-$ space -m ssh /ssh/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com -e SSHCOMMAND="ls -l"
+space -m ssh /ssh/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com -e SSHCOMMAND="ls -l"
 
 ```
 
 If you need to specify the keys manually add those too:  
 
 ```sh
-$ space -m ssh /ssh/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com \
+space -m ssh /ssh/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com \
     -e SSHKEYFILE=key1_id,key2_id,key3_id,key4_id -e SSHCOMMAND="ls -l"
 ```
 
@@ -65,7 +65,7 @@ inside other commands to have them run somewhere else.
 For example the OS module could be wrapped in the SSH module to be run on a remote machine.
 
 ```sh
-$ space -m os /info/
+space -m os /info/
 ```
 
 Above will output some basic info about the system.  
@@ -73,7 +73,7 @@ Above will output some basic info about the system.
 If we want to run this on a remote machine over ssh, simply do this:  
 
 ```sh
-$ space -m os /info -m ssh /wrap/ -e SSHHOST=address
+space -m os /info -m ssh /wrap/ -e SSHHOST=address
 
 ```
 
@@ -82,7 +82,7 @@ We'll take the example above, now you will see why we usually want
 to use `-e` variables instead of positional arguments, because we can use modules together:  
 
 ```sh
-$ space -m os /info/ \
+space -m os /info/ \
     -m ssh /wrap/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com \
     -e SSHKEYFILE=key1_id,key2_id,key3_id,key4_id
 ```
@@ -96,7 +96,7 @@ using the `file` module.
 ### Upload a file
 
 ```sh
-$ echo "Hello World!" | space -m file /pipwrite/ -e file=/tmp/hello \
+echo "Hello World!" | space -m file /pipwrite/ -e file=/tmp/hello \
     -m ssh /wrap/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com \
     -e SSHKEYFILE=key1_id,key2_id,key3_id,key4_id
 ```
@@ -104,7 +104,7 @@ $ echo "Hello World!" | space -m file /pipwrite/ -e file=/tmp/hello \
 Let's fetch the contents back using `cat`:  
 
 ```sh
-$ space -m file /cat/ -e file=/tmp/hello \
+space -m file /cat/ -e file=/tmp/hello \
     -m ssh /wrap/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com \
     -e SSHKEYFILE=key1_id,key2_id,key3_id,key4_id
 ```
@@ -114,7 +114,7 @@ $ space -m file /cat/ -e file=/tmp/hello \
 We can use the `utils` module for waiting on files we expect to be created:  
 
 ```sh
-$ space -m utils /waitforfile/ -e waitfilelist=/tmp/hello \
+space -m utils /waitforfile/ -e waitfilelist=/tmp/hello \
     -m ssh /wrap/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com \
     -e SSHKEYFILE=key1_id,key2_id,key3_id,key4_id
 ```

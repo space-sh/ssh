@@ -29,7 +29,7 @@ localhost:localport are relative to the local machine.
 ## Example
 
 ```sh
-$ space -m ssh /tunnel/reverse/ -e SSHTUNNEL=0.0.0.0:9333:127.0.0.1:9333 -e SSHHOST=address
+space -m ssh /tunnel/reverse/ -e SSHTUNNEL=0.0.0.0:9333:127.0.0.1:9333 -e SSHHOST=address
 ```
 
 Exit status code is expected to be 0 on success.

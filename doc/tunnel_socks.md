@@ -21,7 +21,7 @@ bindhost:bindport are relative to the local machine.
 ## Example
 
 ```sh
-$ space -m ssh /tunnel/socks/ -e SSHTUNNEL=0.0.0.0:9333 -e SSHHOST=address
+space -m ssh /tunnel/socks/ -e SSHTUNNEL=0.0.0.0:9333 -e SSHHOST=address
 ```
 
 Remember to configure your browser to use a socks5 proxy connected to 127.0.0.1:9333.

@@ -25,7 +25,7 @@ remotehost:remoteport are relative to the remote machine.
 ## Example
 
 ```sh
-$ space -m ssh /tunnel/forward/ -e SSHTUNNEL=0.0.0.0:9333:example.com:9333 -e SSHHOST=address
+space -m ssh /tunnel/forward/ -e SSHTUNNEL=0.0.0.0:9333:example.com:9333 -e SSHHOST=address
 ```
 
 Exit status code is expected to be 0 on success.
