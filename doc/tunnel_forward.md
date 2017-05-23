@@ -2,6 +2,7 @@
 modulename: SSH
 title: /tunnel/forward/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/tunnel_forward.md
 weight: 200
 ---
 # SSH module: Open forward tunnel from server

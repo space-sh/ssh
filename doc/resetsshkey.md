@@ -2,6 +2,7 @@
 modulename: SSH
 title: /resetsshkey/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/resetsshkey.md
 weight: 200
 ---
 # SSH module: Reset SSH key

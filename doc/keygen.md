@@ -2,6 +2,7 @@
 modulename: SSH
 title: /keygen/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/keygen.md
 weight: 200
 ---
 # SSH module: Keygen

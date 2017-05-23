@@ -2,6 +2,7 @@
 modulename: SSH
 title: /tunnel/socks/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/tunnel_socks.md
 weight: 200
 ---
 # SSH module: Open SOCKS tunnel

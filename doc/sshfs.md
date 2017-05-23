@@ -2,6 +2,7 @@
 modulename: SSH
 title: /sshfs/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/sshfs.md
 weight: 200
 ---
 # SSH module: Mount over SSH 

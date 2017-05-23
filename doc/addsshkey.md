@@ -2,6 +2,7 @@
 modulename: SSH
 title: /addsshkey/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/addsshkey.md
 weight: 200
 ---
 # SSH module: Add SSH key

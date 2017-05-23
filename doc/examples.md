@@ -2,6 +2,7 @@
 modulename: SSH
 title: Examples
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/examples.md
 weight: 200
 ---
 # SSH Module

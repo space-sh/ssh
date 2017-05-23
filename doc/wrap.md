@@ -2,6 +2,7 @@
 modulename: SSH
 title: /wrap/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/wrap.md
 weight: 200
 ---
 # SSH module: Wrap

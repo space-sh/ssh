@@ -2,6 +2,7 @@
 modulename: SSH
 title: /tunnel/reverse/
 giturl: gitlab.com/space-sh/ssh
+editurl: /edit/master/doc/tunnel_reverse.md
 weight: 200
 ---
 # SSH module: Open reverse tunnel from server
