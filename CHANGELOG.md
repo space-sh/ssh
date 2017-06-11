@@ -1,5 +1,12 @@
 # Space Module change log - ssh
 
+## [1.1.3 - 2017-06-11]
+
+* Update documentation
+
+* Change Arch Linux image for CI tests
+
+
 ## [1.1.2 - 2017-05-20]
 
 * Rename expected local OUT variables
