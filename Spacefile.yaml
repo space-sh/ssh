@@ -194,6 +194,20 @@ tunnel:
                     - bindhost:bindport:localhost:localport
             - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-oExitOnForwardFailure=yes;-R${SSHTUNNEL}
             - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
+    wrap_reverse:
+        _info:
+            title: Reverse tunnel as a wrapper
+            desc: |
+                An example of wrapping a reverse tunnel could be when the SSH user does not have root priviligies and cannot
+                access ports below 1024. Then we can use this command as a wrapper and add something as:
+                    -m os /shell/ -e command="socat tcp-listen:80,fork,reuseaddr tcp-connect:127.0.0.1:7474" -s sudo
+                This will run `socat` in the server using sudo so we can listen to port 80 and then tunnel
+                it back home.
+        _env:
+            - SSHTUNNEL:
+                title: SSH tunnel parameters
+            - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-oExitOnForwardFailure=yes;-R${SSHTUNNEL}
+            - SPACE_WRAP: SSH_WRAP
     forward:
         @include: |/ssh/
         _info:
