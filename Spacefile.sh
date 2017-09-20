@@ -216,6 +216,17 @@ _SSH_BUILD_COMMAND()
         # We use semicolon as a deferred space, since a space would separate the flags.
         STRING_SUBST "flags" ';' ' ' 1
 
+        if [ -n "${keyfile}" ]; then
+            # Check permissions of key file because ssh might refuse it
+            local prms=
+            prms=$(stat -c "%a" "${keyfile}")
+            if [ "$?" -eq 0 ]; then
+                if [ "${prms%?00}" != "" ]; then
+                    PRINT "The keyfile ${keyfile} has to broad permissions, ssh will likely refuse it." "warning"
+                fi
+            fi
+        fi
+
         if [ -z "${out_sshcommand}" ]; then
             out_sshcommand="${keyfile:+-i ${keyfile} }-p ${port} ${flags:+${flags} }${user:+${user}@}${host}"
         else
