@@ -38,6 +38,7 @@ and remote filesystem mounting using sshfs.
 + forward
 + reverse
 + socks
++ wrap_reverse
 
 ## /umount/
 	Unmount sshfs mountpoint
