@@ -1,5 +1,12 @@
 # Space Module change log - ssh
 
+## [1.2.0 - 2017-09-28]
+
++ Add `/tunnel/wrap_reverse`
+
++ Add a check to `SSH` function to verify all key file permissions before running
+
+
 ## [1.1.3 - 2017-06-11]
 
 * Update documentation
