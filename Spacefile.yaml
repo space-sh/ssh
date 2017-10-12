@@ -67,6 +67,7 @@ ssh:
             title: One or more users comma separated
         - SSHKEYFILE:
             title: One or more keyfiles comma separated
+            completion: G
         - SSHPORT:
             title: One or more ports comma separated
         - SSHFLAGS:

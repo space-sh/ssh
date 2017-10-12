@@ -292,14 +292,18 @@ SSH_WRAP()
 #================================
 SSH_KEYGEN()
 {
-    SPACE_SIGNATURE="sshkeyfile:1 [sshpubkeyfile]"
+    SPACE_SIGNATURE="sshkeyfile:1 [bits sshpubkeyfile]"
     SPACE_DEP="PRINT FILE_MKDIRP FILE_CP"
 
     local sshkeyfile="${1}"
     shift
 
+    local bits="${1:-2048}"
+    shift $(( $# > 0 ? 1 : 0 ))
+
     local sshpubkeyfile="${1-}"
     shift $(( $# > 0 ? 1 : 0 ))
+
 
     PRINT "Generate new key pair." "info"
 
@@ -312,7 +316,7 @@ SSH_KEYGEN()
         PRINT "Keyfile: ${sshkeyfile} already exists, not generating new." "warning"
         return 0
     fi
-    FILE_MKDIRP "$(dirname "${sshkeyfile}")" && ssh-keygen -f "${sshkeyfile}"
+    FILE_MKDIRP "$(dirname "${sshkeyfile}")" && ssh-keygen -f "${sshkeyfile}" -b "${bits}" -N ""
     if [ "$?" != "0" ]; then
         return 1
     fi
