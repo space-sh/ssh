@@ -33,9 +33,6 @@ _info:
         Provides common user ssh client operations
         and remote filesystem mounting using sshfs.
 
-_env:
-    - RUN_ALIAS: /ssh/
-
 keygen:
     _info:
         title: Generate SSH key pair
