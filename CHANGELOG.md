@@ -1,5 +1,14 @@
 # Space Module change log - ssh
 
+## [1.3.0 - 2017-10-19]
+
++ Add `bits` parameter to `KEYGEN` function
+
+* Update `BUILD_COMMAND` to print warning when stat is not available
+
+- Remove default module behavior to avoid endless looping
+
+
 ## [1.2.0 - 2017-09-28]
 
 + Add `/tunnel/wrap_reverse`
