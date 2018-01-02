@@ -174,7 +174,7 @@ ${shell} -c \"\$RUN\"
 #================================
 _SSH_BUILD_COMMAND()
 {
-    SPACE_DEP="PRINT STRING_ESCAPE STRING_ITEM_COUNT STRING_ITEM_GET STRING_SUBST"
+    SPACE_DEP="PRINT STRING_ESCAPE STRING_ITEM_COUNT STRING_ITEM_GET STRING_SUBST FILE_STAT"
 
     local IFS="${IFS},"
     local count=0
@@ -219,7 +219,7 @@ _SSH_BUILD_COMMAND()
         if [ -n "${keyfile}" ]; then
             # Check permissions of key file because ssh might refuse it
             local prms=
-            prms=$(stat -c "%a" "${keyfile}" 2>/dev/null)
+            prms=$(FILE_STAT "${keyfile}" "%a" 2>/dev/null)
             if [ "$?" -eq 0 ]; then
                 if [ "${prms%?00}" != "" ]; then
                     PRINT "The keyfile ${keyfile} has to broad permissions, ssh will likely refuse it." "warning"

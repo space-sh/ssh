@@ -1,5 +1,10 @@
 # Space Module change log - ssh
 
+## [1.3.1 - 2018-01-02]
+
+* Change `BUILD_COMMAND` to use cross-platform `FILE_STAT`
+
+
 ## [1.3.0 - 2017-10-19]
 
 + Add `bits` parameter to `KEYGEN` function
