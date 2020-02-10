@@ -238,7 +238,7 @@ tunnel:
             desc: |
                 Create SOCKS tunnel to remote server.
                 Remember to configure your browser to use socks5 proxy
-                on 127.0.0.1:port.
+                on 127.0.0.1:9333 (the default).
         _env:
             - SSHTUNNEL:
                 title: SSH tunnel parameters
@@ -247,6 +247,7 @@ tunnel:
                     bindhost and bindport are on the local computer.
                 values:
                     - 127.0.0.1:9333
+                value: ${SSHTUNNEL:-127.0.0.1:9333}
             - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-D${SSHTUNNEL}
             - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
 
