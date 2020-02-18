@@ -1,5 +1,10 @@
 # Space Module change log - ssh
 
+## [1.4.0 - 2020-02-18]
+
++ Add `SSHTUNNEL` default value
+
+
 ## [1.3.1 - 2018-01-02]
 
 * Change `BUILD_COMMAND` to use cross-platform `FILE_STAT`
