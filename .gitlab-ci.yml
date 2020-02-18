@@ -17,6 +17,7 @@ arch_test_module:
   image: archlinux:20191205
   script:
     - pacman -Sy --noconfirm curl git which
+    - pacman-key --refresh-keys
     - git clone https://gitlab.com/space-sh/space.git
     - cd space && ./space /install/ && cd ..
     - mkdir ~/.ssh
