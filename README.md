@@ -1,4 +1,4 @@
-# SSH module | [![build status](https://gitlab.com/space-sh/ssh/badges/master/build.svg)](https://gitlab.com/space-sh/ssh/commits/master)
+# SSH module | [![build status](https://gitlab.com/space-sh/ssh/badges/master/pipeline.svg)](https://gitlab.com/space-sh/ssh/commits/master)
 
 Provides common user ssh client operations
 and remote filesystem mounting using sshfs.
