@@ -1,5 +1,10 @@
 # Space Module change log - ssh
 
+## [1.4.1 - 2020-02-24]
+
+* Update documentation
+
+
 ## [1.4.0 - 2020-02-18]
 
 + Add `SSHTUNNEL` default value
