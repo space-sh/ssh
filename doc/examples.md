@@ -118,3 +118,31 @@ space -m utils /waitforfile/ -e waitfilelist=/tmp/hello \
     -m ssh /wrap/ -e SSHHOST=jump1.example.com,jump2.example.com,jump3.example.com,destination.example.com \
     -e SSHKEYFILE=key1_id,key2_id,key3_id,key4_id
 ```
+
+### Using a hostfile instead of arguments
+Instead of providing SSH arguments on command line or as variables one can use a `.env` file from where variables are read.
+
+If using a host file, this is an `.env` file where the `SSH_*` variables are read from the file instead from the cmd line.
+
+If values are also provided on command line then those values are appended to those in the .env file so that the host.env file can be used for declaring the jump host you are using for the host you are providing on cmd line.
+
+In the `.env` file there can also be jump hosts defined, if so that will trigger a read of another `host.env` file which will be used as a jump host for the host described in the first `host.env` file.
+
+A special case is when using a `host.env` file and declaring port, user, keyfile, flags on command line but no host parameter, then those values are used *instead* of the values read from the (first) `host.env` file.
+
+Example host.env file:
+```sh
+HOST=1.2.3.4
+USER=clownsalad
+KEYFILE=.ssh/id_rsa
+PORT=4562
+FLAGS=-opasswordauthentication=no -ostricthostkeychecking=no -oexitonforwardfailure=no
+JUMPHOST=../host2
+```
+
+`HOST` is required.  
+`PORT` defaults to 22.  
+`Multiple` flags can be used and are optional  
+`JUMPHOST` is the path to another diretory where a host.env file exists, which will be used as a jumphost.  
+`JUMPHOST` can also point to another .env file in the same directory.  
+For `KEYFILE` and `JUMPHOST` relative paths will be set below user `$HOME`.  

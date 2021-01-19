@@ -57,6 +57,9 @@ keygen:
 ssh:
     _info:
         title: SSH into remote machine
+        desc: |
+            You could have a list of remote hosts
+            to connect through, a.k.a. jump hosts.
     _env:
         - SSHHOST:
             title: One or more addresses comma separated
@@ -69,6 +72,8 @@ ssh:
             title: One or more ports comma separated
         - SSHFLAGS:
             title: One or more flags comma separated
+        - SSHHOSTFILE:
+            title: A host.env file to read for variable values
         - SSHSHELL:
             title: The remote shell to invoke
         - SSHCOMMAND:
@@ -97,11 +102,14 @@ ssh:
                         - flags
                 -
                     values:
+                        - hostfile:optional
+                -
+                    values:
                         - shell:optional
                 -
                     values:
                         - command:optional
-        - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
+        - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHHOSTFILE}" "${SSHSHELL}" "${SSHCOMMAND}"
 
 mount:
     _info:
@@ -121,10 +129,8 @@ mount:
             title: One or more ports comma separated
         - SSHFLAGS:
             title: One or more flags comma separated
-        - SSHSHELL:
-            title: The remote shell to invoke
-        - SSHCOMMAND:
-            title: The remote command to invoke
+        - SSHHOSTFILE:
+            title: A host.env file to read for variable values
         - SPACE_ARGS:
             arguments:
                 -
@@ -155,7 +161,10 @@ mount:
                 -
                     values:
                         - flags
-        - RUN: SSH_FS -- "${SSHREMOTEPATH}" "${SSHLOCALPATH}" "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}"
+                -
+                    values:
+                        - hostfile
+        - RUN: SSH_FS -- "${SSHREMOTEPATH}" "${SSHLOCALPATH}" "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHHOSTFILE}"
 
 umount:
     _info:
@@ -191,7 +200,7 @@ tunnel:
                 values:
                     - bindhost:bindport:localhost:localport
             - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-oExitOnForwardFailure=yes;-R${SSHTUNNEL}
-            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHHOSTFILE}" "${SSHSHELL}" "${SSHCOMMAND}"
     wrap_reverse:
         _info:
             title: Reverse tunnel as a wrapper
@@ -230,7 +239,7 @@ tunnel:
                 values:
                     - localhost:localport:remotehost:remoteport
             - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-L${SSHTUNNEL}
-            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHHOSTFILE}" "${SSHSHELL}" "${SSHCOMMAND}"
     socks:
         @include: |/ssh/
         _info:
@@ -249,7 +258,7 @@ tunnel:
                     - 127.0.0.1:9333
                 value: ${SSHTUNNEL:-127.0.0.1:9333}
             - SSHFLAGS: ${SSHFLAGS:+$SSHFLAGS;}-D${SSHTUNNEL}
-            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHSHELL}" "${SSHCOMMAND}"
+            - RUN: SSH -- "${SSHHOST}" "${SSHUSER}" "${SSHKEYFILE}" "${SSHPORT}" "${SSHFLAGS}" "${SSHHOSTFILE}" "${SSHSHELL}" "${SSHCOMMAND}"
 
 wrap:
     _info:
@@ -268,6 +277,8 @@ wrap:
             title: One or more ports comma separated
         - SSHFLAGS:
             title: One or more flags comma separated
+        - SSHHOSTFILE:
+            title: A host.env file to read for variable values
         - SSHSHELL:
             title: The remote shell to invoke
         - SPACE_WRAP: SSH_WRAP
