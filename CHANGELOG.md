@@ -1,5 +1,18 @@
 # Space Module change log - ssh
 
+## [2.0.0 - 2021-01-19]
+
++ Add `HOSTFILE` argument to load jump host info from a .env file
+
++ Add documentation for `HOSTFILE`
+
+* Inject `hostfile` argument before shell argument
+
+* Make `host` an optional parameter, when using `hostfile`
+
+* Change output to debug level
+
+
 ## [1.4.1 - 2020-02-24]
 
 * Update documentation
