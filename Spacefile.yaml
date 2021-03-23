@@ -15,10 +15,10 @@
 #
 ---
 _clone:
-    @clone: os file string
-    @include: os|/_clone/
-    @include: file|/_clone/
-    @include: string|/_clone/
+    @clone: os:1.3.3 file:1.6.0 string:1.4.0
+    @include: os:1.3.3|/_clone/
+    @include: file:1.6.0|/_clone/
+    @include: string:1.4.0|/_clone/
 @include: |/_clone/
 
 _dep_install:
