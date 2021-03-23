@@ -436,6 +436,7 @@ _SSH_BUILD_COMMAND_HOSTFILE()
                 PRINT "JUMPHOST ${JUMPHOST} env file does not exist as: ${hostfile}" "error"
                 return 1
             fi
+            hostEnvDir="${hostfile%/*}"
             # Iterate again using JUMPHOST
         else
             break
