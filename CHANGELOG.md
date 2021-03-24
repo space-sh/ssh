@@ -1,5 +1,12 @@
 # Space Module change log - ssh
 
+## [2.0.1 - 2021-03-24]
+
+* Fix bug when loading jump hosts via HOSTFILEs
+
+* Fix os, file and string dependency versions
+
+
 ## [2.0.0 - 2021-01-19]
 
 + Add `HOSTFILE` argument to load jump host info from a .env file
